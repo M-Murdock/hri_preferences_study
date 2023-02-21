@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- <node name="switch_user" pkg="hri_preferences_study" type="switch_user.sh" output="screen"/> -->
+    <!-- <include file="$(find poli2)/launch/machine1.launch" /> -->
+</launch>
+<!-- poli2_launch machine1.launch start_manipulation:=true -->
+<!-- rosrun teleop_lib collect_teleop_data.py gen2:=/j2s7s300_driver -->

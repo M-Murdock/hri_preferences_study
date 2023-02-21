@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- <node name="record" pkg="teleop_lib" type="collect_shared_control_data.py" args="-gen2 /j2s7s300_driver" output="screen"/> -->
+    <node name="record" pkg="teleop_lib" type="collect_teleop_data.py" args="-gen2 /j2s7s300_driver" output="screen"/>
+    <!-- <include file="$(find poli2)/launch/machine1.launch" /> -->
+</launch>
