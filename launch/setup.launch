@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<launch>
+    <node name="profile_builder" pkg="teleop_lib" type="profile_builder.py" output="screen"/>
+</launch>

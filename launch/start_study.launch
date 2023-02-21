@@ -1,7 +1,13 @@
 <?xml version="1.0"?>
 <launch>
-    <!-- <node name="switch_user" pkg="hri_preferences_study" type="switch_user.sh" output="screen"/> -->
-    <!-- <include file="$(find poli2)/launch/machine1.launch" /> -->
+    <!-- Start up the robot -->
+    <include file="$(find poli2_launch)/launch/machine1.launch">
+        <arg name="start_manipulation" value="true"/>
+    </include>
+
+    <!-- Home the arm -->
+    <node pkg="rosservice" type="rosservice" name="global_loc" args="call --wait /j2s7s300_driver/in/home_arm" />
+
+    <!-- Move the arm -->
+    <!-- <node pkg="rosservice" type="rosservice" name="global_loc" args="call -wait /j2s7s300_driver/in/add_pose_to_Cartesian_trajectory" /> -->
 </launch>
-<!-- poli2_launch machine1.launch start_manipulation:=true -->
-<!-- rosrun teleop_lib collect_teleop_data.py gen2:=/j2s7s300_driver -->

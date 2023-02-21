@@ -59,6 +59,9 @@
   <exec_depend>roscpp</exec_depend>
   <exec_depend>rospy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
+  <exec_depend>study_runner</exec_depend>
+  <exec_depend>teleop_lib</exec_depend>
+  <exec_depend>poli2_launch</exec_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->
