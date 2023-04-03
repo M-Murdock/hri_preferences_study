@@ -1,4 +1,25 @@
 <?xml version="1.0"?>
 <launch>
-    <node name="profile_builder" pkg="teleop_lib" type="profile_builder.py" output="screen"/>
+    
+    <!-- Start up the robot -->
+    <include file="$(find poli2_launch)/launch/machine1.launch">
+        <remap from="gen2" to="j2s7s300_driver"/>
+        <arg name="start_manipulation" value="true"/>
+        <arg name="robot_name" value="boop"/>
+        <!-- <arg name="start_rviz" value="true" /> -->
+    </include>
+
+
+    <node pkg="rosservice" type="rosservice" name="global_loc" args="call --wait /j2s7s300_driver/in/home_arm" />
+    
+    <!-- Teleop -->
+    <node pkg="joy" name="joy_node" type="joy_node" />
+
+    <node pkg="teleop_lib" name="profile_builder" type="profile_builder.py">
+        <remap from="gen2" to="j2s7s300_driver"/>
+    </node>
+
+    <node pkg="hri_preferences_study" name="teleop" type="teleop.py" output="screen"></node>
+
+
 </launch>

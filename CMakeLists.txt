@@ -14,6 +14,9 @@ find_package(catkin REQUIRED COMPONENTS
   study_runner
   teleop_lib
   poli2_launch
+  joy
+  geometry_msgs
+  dynamic_reconfigure
 )
 
 ## System dependencies are found with CMake's conventions
@@ -106,10 +109,10 @@ catkin_python_setup()
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES hri_preferences_study
-#  CATKIN_DEPENDS roscpp rospy std_msgs study_runner teleop_lib poli2_launch 
-#  DEPENDS system_lib
+  INCLUDE_DIRS include
+  LIBRARIES hri_preferences_study
+  CATKIN_DEPENDS roscpp rospy std_msgs  
+  DEPENDS system_lib
 )
 
 ###########
@@ -136,7 +139,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/hri_preferences_study_node.cpp)
+#add_executable(${PROJECT_NAME}_node src/hri_preferences_study_node.cpp src/teleop.py srcripts/test.py)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -162,10 +165,9 @@ include_directories(
 
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
-# catkin_install_python(PROGRAMS
-#   scripts/my_python_script
-#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+catkin_install_python(PROGRAMS src/teleop.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
