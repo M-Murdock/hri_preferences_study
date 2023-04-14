@@ -18,6 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   dynamic_reconfigure
   shared_control
+  armpy
 )
 
 ## System dependencies are found with CMake's conventions
