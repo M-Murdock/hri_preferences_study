@@ -2,11 +2,16 @@
 import rospy
 from kinova_msgs.msg import KinovaPose
 import numpy as np
-# import shared_control 
-# from shared_control.policies import FixedPolicy
+import gym
+import shared_control
 
 global last_positions 
 global start_position
+
+global action_space
+global policies
+global pred 
+global policy
 
 class FixedPolicy:
     def __init__(self, action):
@@ -14,11 +19,16 @@ class FixedPolicy:
 
     def get_q_value(self, x, a):
         return np.dot(a, self._action)
-    
+
     def get_q_values(self, x, a):
         return np.dot(a, self._action)
 
+
 def callback(data):
+    global action_space
+    global policies
+    global pred 
+    global policy
 
     global start_position
     global last_positions # last X/Y/Z position of the end effector
@@ -51,7 +61,14 @@ def callback(data):
         action[max_index] = -1
 
 
-    print(action)
+    print(f"\nx = {data.X}, y = {data.Y}, z = {data.Z}")
+    print(f"u_h = {action}")
+
+    u_h = action
+    prob = pred.update(None, u_h)
+    u_r = policy.get_action(None, prob)
+    print(f"{u_h} -> {prob} -> {u_r}")
+
 
 
 def listener():
@@ -66,11 +83,18 @@ if __name__ == '__main__':
     start_position = [None, None, None]
     last_positions = [0, 0, 0]
 
-    # action_space =((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1)) # up, down, left, right
-    
-    # policies = [FixedPolicy((1, 0, 0)), FixedPolicy((0, 1, 0)), FixedPolicy((0, 0, 1))]
+    global action_space
+    global policies
+    global pred 
+    global policy
 
-    # pred = shared_control.predictors.MaxEntPredictor(policies)
-    # policy = shared_control.policies.SharedAutoPolicy(policies, action_space)
+
+    action_space =((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1)) # up, down, left, right
+    
+    policies = [FixedPolicy((1, 0, 0)), FixedPolicy((0, 1, 0)), FixedPolicy((0, 0, 1)), FixedPolicy((-1, 0, 0)), FixedPolicy((0, -1, 0)), FixedPolicy((0, 0, -1))]
+
+    pred = shared_control.predictors.MaxEntPredictor(policies)
+    policy = shared_control.policies.SharedAutoPolicy(policies, action_space)
+
 
     listener()
