@@ -8,6 +8,7 @@
         <arg name="robot_name" value="boop"/>
     </include>
 
-    <node pkg="hri_preferences_study" name="goto_target" type="goto_target.py" output="screen"></node> 
+    <node pkg="hri_preferences_study" name="shared_control" type="shared_control.py" output="screen"></node> 
+
 
 </launch>
