@@ -25,7 +25,7 @@ class FixedPolicy:
 
 
 def callback(data):
-    global action_space
+    global action_spacex
     global policies
     global pred 
     global policy

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+    
+    <!-- Start up the robot -->
+    <include file="$(find poli2_launch)/launch/machine1.launch">
+        <remap from="gen2" to="j2s7s300_driver"/>
+        <arg name="start_manipulation" value="true"/>
+        <arg name="robot_name" value="boop"/>
+    </include>
+
+    <node pkg="hri_preferences_study" name="goto_target" type="goto_target.py" output="screen"></node> 
+
+</launch>

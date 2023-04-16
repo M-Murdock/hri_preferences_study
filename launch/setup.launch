@@ -14,6 +14,7 @@
     
     <!-- Teleop -->
     <node pkg="joy" name="joy_node" type="joy_node" />
+   
 
     <!-- <node pkg="teleop_lib" name="profile_builder" type="profile_builder.py">
         <remap from="gen2" to="j2s7s300_driver"/>
@@ -23,7 +24,7 @@
     </node>
 
     <!-- <node pkg="hri_preferences_study" name="teleop" type="teleop.py" output="screen"></node> -->
-    <!-- <node pkg="hri_preferences_study" name="setup_targets" type="setup_targets.py" output="screen"></node>  -->
+    <!-- <node pkg="hri_preferences_study" name="goto_target" type="goto_target.py" output="screen"></node>  -->
 
 
 <!-- arm.move_to_ee_pose(p.pose) -->
