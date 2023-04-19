@@ -1,20 +1,18 @@
 #!/usr/bin/env python3
-
-
 import rospy
-
-from geometry_msgs.msg import Twist
 import armpy.gen2_teleop
+from geometry_msgs.msg import Twist
 
 if __name__ == "__main__":
     rospy.init_node("teleop_test", anonymous=True)
-    arm = armpy.gen2_teleop.Gen2Teleop(ns="/j2s7s300_driver")
-    
-    vel=Twist()
-    vel.linear.y = 0.02
 
-    r = rospy.Rate(10) # 10hz
-    while not rospy.is_shutdown():
-        r.sleep()
-        arm.set_velocity(vel)
-   
+    vel = Twist()
+    vel.linear.x = 0.2
+
+    arm = armpy.gen2_teleop.Gen2Teleop(ns="/j2s7s300_driver")
+    arm.set_velocity(vel)
+    # try:
+    #     while not rospy.is_shutdown():
+    #         rospy.spin() 
+    # except:
+    #     pass
