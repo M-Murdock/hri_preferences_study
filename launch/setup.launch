@@ -20,9 +20,9 @@
         <remap from="gen2" to="j2s7s300_driver"/>
     </node> -->
 
-    <!-- <node pkg="teleop_lib" name="collect_teleop_data" type="collect_teleop_data.py">
+    <node pkg="teleop_lib" name="collect_teleop_data" type="collect_teleop_data.py">
         <remap from="gen2" to="j2s7s300_driver"/>
-    </node> -->
+    </node>
     <!-- <node pkg="teleop_lib" name="user_cmd" type="user_cmd.py"> -->
         <!-- <remap from="gen2" to="j2s7s300_driver"/> -->
     <!-- </node> -->
