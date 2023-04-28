@@ -7,7 +7,8 @@
         <arg name="start_manipulation" value="true"/>
         <arg name="robot_name" value="boop"/>
     </include>
-
+    <node pkg="rosservice" type="rosservice" name="global_loc" args="call --wait /j2s7s300_driver/in/home_arm" />
+    
     <node pkg="joy" name="joy_node" type="joy_node" />
     <!-- <node pkg="hri_preferences_study" name="shared_control" type="shared_control.py" output="screen"></node>  -->
 
