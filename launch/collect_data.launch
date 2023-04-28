@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<launch>
+    
+    <!-- Start up the robot -->
+    <include file="$(find poli2_launch)/launch/machine1.launch">
+        <arg name="start_manipulation" value="true"/>
+        <arg name="robot_name" value="boop"/>
+        <!-- <arg name="start_rviz" value="true" /> -->
+    </include>
+
+    <!-- Collect Data -->
+    <node pkg="joy" name="joy_node" type="joy_node" />
+
+    <node pkg="teleop_lib" name="collect_teleop_data" type="collect_teleop_data.py">
+        <remap from="gen2" to="j2s7s300_driver"/>
+    </node>
+
+
+</launch>
