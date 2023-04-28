@@ -25,23 +25,28 @@ if __name__ == "__main__":
 
 
             # Get user's action as a unit vector (u)
-            unit_vector = user_action / np.linalg.norm(user_action)
-            print('unit vector: ', unit_vector, '\n')
+            if not np.all(user_action==0):
+                unit_vector = user_action / np.linalg.norm(user_action)
+            else:
+                unit_vector = np.array([0, 0, 0])
+
+            print('unit vector: ', unit_vector)
 
             # Get robot's predicted action (a)
             predicted_action = np.array([0, 0, 1]) # expressed as a unit vector NOTE: this needs to be calculated
 
             # Merge the two actions
             merged_action = (unit_vector + predicted_action) / 2
-
+            
             # Convert the action vector to a Twist message
             merged_action_twist = Twist()
             merged_action_twist.linear.x = merged_action[0]
             merged_action_twist.linear.y = merged_action[1]
             merged_action_twist.linear.z = merged_action[2]
 
+            print('merged action: ', merged_action_twist, '\n')
+
             # Perform resulting action
-            # arm.set_velocity(action.cmd.twist)
             arm.set_velocity(merged_action_twist)
 
     except:
