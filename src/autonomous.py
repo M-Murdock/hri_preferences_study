@@ -50,7 +50,7 @@ def main():
     # p = arm.group.get_current_pose()
     # p.pose.position.x -= 0.01
     # print(p)
-    arm.move_to_ee_pose(pos4) # Move to specified end effector position
+    arm.move_to_ee_pose(pos3) # Move to specified end effector position
     # arm.move_to_ee_pose(pos3)
 
 if __name__ == "__main__":

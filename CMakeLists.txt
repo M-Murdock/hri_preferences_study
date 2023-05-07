@@ -141,7 +141,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-#add_executable(${PROJECT_NAME}_node src/hri_preferences_study_node.cpp src/teleop.py srcripts/test.py)
+#add_executable(${PROJECT_NAME}_node src/hri_preferences_study_node.cpp )
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -167,7 +167,7 @@ include_directories(
 
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
-catkin_install_python(PROGRAMS src/teleop.py
+catkin_install_python(PROGRAMS 
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
