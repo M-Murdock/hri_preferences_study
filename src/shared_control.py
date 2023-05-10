@@ -38,8 +38,6 @@ if __name__ == "__main__":
             position = rospy.wait_for_message('/j2s7s300_driver/out/tool_pose', PoseStamped) # wait for robot's position
 
             # Store user action, state as numpy arrays
-            # user_action = np.array([action.cmd.twist.linear.x, action.cmd.twist.linear.y, action.cmd.twist.linear.z])
-            # state = np.array([position.pose.position.x, position.pose.position.y, position.pose.position.z])
             user_action = [action.cmd.twist.linear.x, action.cmd.twist.linear.y, action.cmd.twist.linear.z]
             state = [position.pose.position.x, position.pose.position.y, position.pose.position.z]
             
@@ -53,14 +51,13 @@ if __name__ == "__main__":
 
             u_h_index = action_space.index(tuple(u_h)) # remap action to an index
             state = np.add(state, u_h) # update state
-            # print(policies[0])
-            print(policies[0].get_q_value_map([0, 0, 0]))
-            # prob = pred.update(state, u_h_index) 
-            # u_r_index = policy.get_action(state, prob)
-            # print(f"{u_h} -> {prob} -> {action_space[u_r_index]}")
-            # u_r = action_space[u_r_index] # Get robot's predicted action (a)
-            u_r = np.array([0, 0, 0]) # Placeholder
- 
+
+
+            prob = pred.update(state, u_h_index) 
+            u_r_index = policy.get_action(state, prob)
+            print(f"{u_h} -> {prob} -> {action_space[u_r_index]}") # For debugging
+            u_r = np.array(action_space[u_r_index]) # Get robot's predicted action (a)
+
             # ------------------------------
             # Merge the two actions
             merged_action = (u_h + u_r) / 2
