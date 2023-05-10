@@ -5,6 +5,7 @@ import teleop_lib.plugins.user_cmd
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import PoseStamped
 import numpy as np
+import math
 import shared_control
 from shared_auto import SharedAutoPolicy
 from maxent_pred import MaxEntPredictor
@@ -28,6 +29,8 @@ if __name__ == "__main__":
     arm = armpy.gen2_teleop.Gen2Teleop(ns="/j2s7s300_driver")
     action = teleop_lib.plugins.user_cmd.User_Action() # A plugin that gets the user's velocity command
     
+    DIST_THRESHOLD = 0.2 # how close the end effector can be to a goal before we predict that goal
+
     pos1_xyz = None
     pos2_xyz = None 
     pos3_xyz = None
@@ -44,8 +47,10 @@ if __name__ == "__main__":
         pos2_xyz = (pos2.get('position')['x'], pos2.get('position')['y'], pos2.get('position')['z'])
         pos3_xyz = (pos3.get('position')['x'], pos3.get('position')['y'], pos3.get('position')['z'])
 
+    has_reached_goal = False
+
     try:
-        while not rospy.is_shutdown():
+        while not rospy.is_shutdown() and not has_reached_goal:
             action.listen() # wait for user's command
             position = rospy.wait_for_message('/j2s7s300_driver/out/tool_pose', PoseStamped) # wait for robot's position
 
@@ -66,6 +71,7 @@ if __name__ == "__main__":
 
 
             prob = pred.update(state, u_h_index) 
+
             u_r_index = policy.get_action(state, prob)
             print(f"{u_h} -> {prob} -> {action_space[u_r_index]}") # For debugging
             u_r = np.array(action_space[u_r_index]) # Get robot's predicted action (a)
@@ -73,7 +79,7 @@ if __name__ == "__main__":
             # ------------------------------
             # Merge the two actions
             merged_action = (u_h + u_r) / 2
-            
+            0.1
             # Convert the action vector to a Twist message
             merged_action_twist = Twist()
             merged_action_twist.linear.x = merged_action[0]
@@ -84,6 +90,19 @@ if __name__ == "__main__":
 
             # Perform resulting action
             arm.set_velocity(merged_action_twist)
+
+            # if we're very close to a goal, or there's a high likelihood that we've predicted a goal, stop.
+            if prob[0] > 0.9 or prob[1] > 0.9 or prob[1] > 0.9:
+                has_reached_goal = True 
+            if math.dist(state, pos1_xyz) < DIST_THRESHOLD: 
+                has_reached_goal = True
+                print("The predicted goal is: GOAL1")
+            elif math.dist(state, pos2_xyz) < DIST_THRESHOLD: 
+                has_reached_goal = True
+                print("The predicted goal is: GOAL2")
+            elif math.dist(state, pos3_xyz) < DIST_THRESHOLD:
+                has_reached_goal = True
+                print("The predicted goal is: GOAL3")
 
     except:
         pass
