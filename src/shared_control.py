@@ -10,6 +10,7 @@ from shared_auto import SharedAutoPolicy
 from maxent_pred import MaxEntPredictor
 from arm_policy import ArmPolicy
 from geometry_msgs.msg import Pose
+import yaml
 
 def convert_actions(actions): # convert action array to the correct format
     for i in range(0, len(actions)):
@@ -26,11 +27,22 @@ if __name__ == "__main__":
     rospy.init_node("shared_control", anonymous=True)
     arm = armpy.gen2_teleop.Gen2Teleop(ns="/j2s7s300_driver")
     action = teleop_lib.plugins.user_cmd.User_Action() # A plugin that gets the user's velocity command
+    
+    pos1_xyz = None
+    pos2_xyz = None 
+    pos3_xyz = None
 
+    with open('/home/mavis/catkin_ws/src/hri_preferences_study/config/goals.yaml', 'r') as file:
+        output = yaml.safe_load(file)
 
-    pos1_xyz = (-0.0987742692232132, -0.5367502570152283, 0.08353482186794281)
-    pos2_xyz = (0.3203457295894623, -0.4727548360824585, 0.057524073868989944)
-    pos3_xyz = (0.4564712643623352, -0.23805353045463562, 0.09125393629074097)
+        # read in goals from yaml file
+        pos1 = output.get('goal1') 
+        pos2 = output.get('goal2')
+        pos3 = output.get('goal3')
+
+        pos1_xyz = (pos1.get('position')['x'], pos1.get('position')['y'], pos1.get('position')['z'])
+        pos2_xyz = (pos2.get('position')['x'], pos2.get('position')['y'], pos2.get('position')['z'])
+        pos3_xyz = (pos3.get('position')['x'], pos3.get('position')['y'], pos3.get('position')['z'])
 
     try:
         while not rospy.is_shutdown():
