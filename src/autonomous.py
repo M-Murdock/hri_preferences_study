@@ -57,12 +57,14 @@ def main():
 
 
     moveit_commander.roscpp_initialize(sys.argv)
-
     arm = armpy.arm.Arm()
+    arm.move_to_ee_pose(pos1) # Move to specified end effector position
+
+
     # p = arm.group.get_current_pose()
     # p.pose.position.x -= 0.01
     # print(p)
-    arm.move_to_ee_pose(pos1) # Move to specified end effector position
+
     # rospy.sleep(1)
     # arm.move_to_ee_pose(pos2) # Move to specified end effector position
     # rospy.sleep(1)

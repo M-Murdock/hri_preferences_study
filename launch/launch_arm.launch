@@ -5,7 +5,7 @@
     <include file="$(find poli2_launch)/launch/machine1.launch">
         <remap from="gen2" to="j2s7s300_driver"/>
         <arg name="start_manipulation" value="true"/>
-        <arg name="robot_name" value="boop"/>
+        <!-- <arg name="robot_name" value="boop"/> -->
     </include>
 
 
