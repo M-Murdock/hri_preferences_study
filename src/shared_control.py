@@ -15,7 +15,7 @@ import yaml
 import armpy.arm
 import moveit_commander
 import traceback
-import visualization_msgs.msg
+import sys
 
 def convert_actions(actions): # convert action array to the correct format
     for i in range(0, len(actions)):
@@ -33,44 +33,28 @@ if __name__ == "__main__":
     arm = armpy.gen2_teleop.Gen2Teleop(ns="/j2s7s300_driver")
     action = teleop_lib.plugins.user_cmd.User_Action() # A plugin that gets the user's velocity command
     auton_arm = armpy.arm.Arm()
+    moveit_commander.roscpp_initialize(sys.argv)
     
 
-    DIST_THRESHOLD = 0.2 # how close the end effector can be to a goal before we predict that goal
+    DIST_THRESHOLD = 0.1 # how close the end effector can be to a goal before we predict that goal
 
     pos1_xyz = None
     pos2_xyz = None 
     pos3_xyz = None
 
-    pos1 = None
-    pos2 = None
-    pos3 = None
+    output = None
 
     with open('/home/mavis/catkin_ws/src/hri_preferences_study/config/goals.yaml', 'r') as file:
         output = yaml.safe_load(file)
 
         # read in goals from yaml file
-        pos1 = output.get('goal1') 
-        pos2 = output.get('goal2')
-        pos3 = output.get('goal3')
+        pos1_xyz = (output.get('goal1') .get('position')['x'], output.get('goal1') .get('position')['y'], output.get('goal1') .get('position')['z'])
+        pos2_xyz = (output.get('goal2').get('position')['x'], output.get('goal2').get('position')['y'], output.get('goal2').get('position')['z'])
+        pos3_xyz = (output.get('goal3').get('position')['x'], output.get('goal3').get('position')['y'], output.get('goal3').get('position')['z'])
 
-        pos1_xyz = (pos1.get('position')['x'], pos1.get('position')['y'], pos1.get('position')['z'])
-        pos2_xyz = (pos2.get('position')['x'], pos2.get('position')['y'], pos2.get('position')['z'])
-        pos3_xyz = (pos3.get('position')['x'], pos3.get('position')['y'], pos3.get('position')['z'])
-    # print("Before the publisher")
-    # rviz_pub = rospy.Publisher("/visualization_marker", visualization_msgs.msg.Marker, queue_size=10)
-    # message1 = visualization_msgs.msg.Marker() 
-    # message1.color.a = 1
-    # message1.type = visualization_msgs.msg.Marker.SPHERE
-    # message1.pose.position.x = pos1_xyz[0]
-    # message1.pose.position.y = pos1_xyz[1]
-    # message1.pose.position.z = pos1_xyz[2]
-    # message1.color.g = 1
-    # rviz_pub.publish(message1)
-    # import IPython
-    # IPython.embed()
-    # print("After we publish")
 
     has_reached_goal = False
+    goal = None
 
     try:
         while not rospy.is_shutdown() and not has_reached_goal:
@@ -118,39 +102,36 @@ if __name__ == "__main__":
 
             # Perform resulting action
             arm.set_velocity(merged_action_twist)
-
-            # moveit_commander.roscpp_initialize(sys.argv)
             
-            # if we're very close to a goal, or there's a high likelihood that we've predicted a goal, stop.
-
+            # if we're very close to a goal, stop.
             if math.dist(state, pos1_xyz) < DIST_THRESHOLD: 
                 has_reached_goal = True
-                print("The predicted goal is: GOAL1")
-
-                # pose1 = Pose()
-                # pose1.position.x = pos1.get('position')['x'] 
-                # pose1.position.y = pos1.get('position')['y']
-                # pose1.position.z = pos1.get('position')['z']
-
-                # pose1.orientation.x = pos1.get('orientation')['x']
-                # pose1.orientation.y = pos1.get('orientation')['y']
-                # pose1.orientation.z = pos1.get('orientation')['z']
-                # pose1.orientation.w = pos1.get('orientation')['w']
-                # auton_arm.move_to_ee_pose(pose1)
-
-                
+                print("The predicted goal is: GOAL1")     
+                goal = 'goal1'    
             elif math.dist(state, pos2_xyz) < DIST_THRESHOLD: 
                 has_reached_goal = True
-                # p = auton_arm.group.get_current_pose()
-                # p.pose.position.x -= 0.01
-                # auton_arm.move_to_ee_pose(p)
                 print("The predicted goal is: GOAL2")
+                goal = 'goal2'
             elif math.dist(state, pos3_xyz) < DIST_THRESHOLD:
                 has_reached_goal = True
-                # p = auton_arm.group.get_current_pose()
-                # p.pose.position.x -= 0.01
-                # auton_arm.move_to_ee_pose(p)
                 print("The predicted goal is: GOAL3")
+                goal = 'goal3'
+
+
+        rospy.sleep(0.01)
+        # once we've predicted the goal, move to the goal position
+        pos = Pose()
+        pos.position.x = output.get(goal).get('position')['x'] 
+        pos.position.y = output.get(goal).get('position')['y']
+        pos.position.z = output.get(goal).get('position')['z']
+
+        pos.orientation.x = output.get(goal).get('orientation')['x']
+        pos.orientation.y = output.get(goal).get('orientation')['y']
+        pos.orientation.z = output.get(goal).get('orientation')['z']
+        pos.orientation.w = output.get(goal).get('orientation')['w']
+
+        auton_arm.move_to_ee_pose(pos)
+                
      
     except:
         traceback.print_exc()

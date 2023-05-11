@@ -6,6 +6,7 @@ import teleop_lib.plugins.user_cmd
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import PoseStamped
 import numpy as np
+import traceback
 
 
 if __name__ == "__main__":
@@ -17,7 +18,10 @@ if __name__ == "__main__":
         while not rospy.is_shutdown():
             # action.listen() # when we get a Joy message
             # print(action.cmd.twist)
+            if action.cmd == None:
+                continue
             arm.set_velocity(action.cmd.twist) # perform the action given by the user
             rospy.sleep(0.1)
     except:
+        traceback.print_exc()
         pass
