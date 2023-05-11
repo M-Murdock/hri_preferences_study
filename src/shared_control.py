@@ -118,7 +118,7 @@ if __name__ == "__main__":
                 goal = 'goal3'
 
 
-        rospy.sleep(0.01)
+        rospy.sleep(0.1)
         # once we've predicted the goal, move to the goal position
         pos = Pose()
         pos.position.x = output.get(goal).get('position')['x'] 
@@ -130,7 +130,7 @@ if __name__ == "__main__":
         pos.orientation.z = output.get(goal).get('orientation')['z']
         pos.orientation.w = output.get(goal).get('orientation')['w']
 
-        auton_arm.move_to_ee_pose(pos)
+        # auton_arm.move_to_ee_pose(pos)
                 
      
     except:

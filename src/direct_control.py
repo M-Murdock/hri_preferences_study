@@ -16,8 +16,6 @@ if __name__ == "__main__":
 
     try:
         while not rospy.is_shutdown():
-            # action.listen() # when we get a Joy message
-            # print(action.cmd.twist)
             if action.cmd == None:
                 continue
             arm.set_velocity(action.cmd.twist) # perform the action given by the user

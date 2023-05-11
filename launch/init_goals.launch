@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
 <launch>
+
+    <arg name="goal_name"/>
     
     <!-- Start up the robot -->
     <include file="$(find poli2_launch)/launch/machine1.launch">
@@ -17,6 +19,6 @@
 
     <!-- Save goal positions to yaml file -->
     <node pkg="hri_preferences_study" name="direct_control" type="direct_control.py" output="screen"></node>  
-    <node pkg="hri_preferences_study" name="init_goals" type="init_goals.py" output="screen"></node>  
+    <node pkg="hri_preferences_study" name="init_goals" type="init_goals.py" output="screen" args="$(arg goal_name)"></node>  
 
 </launch>

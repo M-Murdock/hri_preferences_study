@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # How to run: 
-#   - This should be run alongside `direct_control.py`. 
-#   - Edit GOAL_TO_SET to specify which goal (1, 2, or 3) should be set in the yaml file 
+#   - This should be launched with init_goals.launch
+#   - Pass the goal name as an argument goal_name (e.g. goal_name:="goal1")
 #   - Then, teleoperate the arm to a goal position and it will be saved to the yaml file
 
 import rospy
@@ -11,6 +11,7 @@ from geometry_msgs.msg import Twist
 from geometry_msgs.msg import PoseStamped
 import numpy as np
 import yaml
+import sys
 
 def callback(data, goals_doc):
     goals_doc.get(GOAL_TO_SET).get('position')['x'] = data.pose.position.x
@@ -28,17 +29,21 @@ def callback(data, goals_doc):
 
 if __name__ == "__main__":
 
-    GOAL_TO_SET = 'goal3'
-    goals_doc = None
+    try: 
+        GOAL_TO_SET = str(sys.argv[1])
+        goals_doc = None
 
-    with open("/home/mavis/catkin_ws/src/hri_preferences_study/config/goals.yaml") as f:
-        goals_doc = yaml.safe_load(f)
+        with open("/home/mavis/catkin_ws/src/hri_preferences_study/config/goals.yaml") as f:
+            goals_doc = yaml.safe_load(f)
 
 
-    print(goals_doc)
+        rospy.init_node("set_goals", anonymous=True)
+        rospy.Subscriber("/j2s7s300_driver/out/tool_pose", PoseStamped, callback, goals_doc)
+        rospy.sleep(0.01)
+        rospy.spin()
+    except:
+        pass
 
-    rospy.init_node("set_goals", anonymous=True)
-    rospy.Subscriber("/j2s7s300_driver/out/tool_pose", PoseStamped, callback, goals_doc)
-    rospy.sleep(0.01)
-    rospy.spin()
+
+    
 
