@@ -10,7 +10,9 @@ from  study_runner.frames.logging import LoggingFrame, RunLogging
 import tkinter
 import roslaunch
 import rospy
-
+import direct_control
+import shared_control
+import autonomous
 
 class ConditionConfigFrame(tkinter.Frame):
     def __init__(self, parent, _):
@@ -40,23 +42,15 @@ class BasicLogger:
         self._file.close()
 
 
-def run_autonomy_level(config, status_cb):
+async def run_autonomy_level(config, status_cb):
     condition = 'auton_condition:=' + str(config["Condition"])
+    if config["Condition"] == "Autonomous":
+        run_autonomous()
+    if config["Condition"] == "Shared":
+        run_shared_control()
+    if config["Condition"] == "Teleop":
+        run_direct_control()
 
-    uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
-    cli_args = ['/home/mavis/catkin_ws/src/hri_preferences_study/launch/begin_study.launch',condition]
-    roslaunch_args = cli_args[1:]
-    roslaunch_file = [(roslaunch.rlutil.resolve_launch_arguments(cli_args)[0], roslaunch_args)]
-
-    parent = roslaunch.parent.ROSLaunchParent(uuid, roslaunch_file)
-    rospy.loginfo("started")
-    parent.start()
-
-
-    # with RunLogging(config):
-    #     for i in config["Condition"]:
-    #         await asyncio.sleep(1.)
-    #         print(i)
             
 def main():
     root = tkinter.Tk()
