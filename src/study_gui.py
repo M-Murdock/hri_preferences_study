@@ -44,15 +44,26 @@ class BasicLogger:
 
 async def run_autonomy_level(config, status_cb):
     condition = 'auton_condition:=' + str(config["Condition"])
-    if config["Condition"] == "Autonomous":
-        run_autonomous()
-    if config["Condition"] == "Shared":
-        run_shared_control()
-    if config["Condition"] == "Teleop":
-        run_direct_control()
+    # if config["Condition"] == "Autonomous":
+    #     autonomous.run_autonomous()
+    # if config["Condition"] == "Shared":
+    #     shared_control.run_shared_control()
+    # if config["Condition"] == "Teleop":
+    #     direct_control.run_direct_control()
+    # direct_controller = direct_control.Direct_Control()
+    # autonomous_controller = autonomous.Autonomous()
+    shared_controller = shared_control.Shared_Control()
+    rospy.spin()
+    # try:
+    #     while not rospy.is_shutdown():
+    #         direct_controller.set_velocity()
+    #         rospy.sleep(0.1)
+    # except:
+    #     pass
 
             
 def main():
+    rospy.init_node("gui", anonymous=True)
     root = tkinter.Tk()
     runner = study_runner.StudyRunner(root, run_autonomy_level)
     runner.add_config_frame(ConditionConfigFrame, "Condition")

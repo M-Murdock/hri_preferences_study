@@ -18,6 +18,6 @@
     <!-- Run teleop/shared/autonomous control -->
     <!-- <node pkg="hri_preferences_study" name="shared_control" type="shared_control.py" output="screen"></node>  -->
     <!-- <node pkg="hri_preferences_study" name="direct_control" type="direct_control.py" output="screen"></node>  -->
-    <node pkg="hri_preferences_study" name="autonomous" type="autonomous.py" output="screen"></node>
+    <!-- <node pkg="hri_preferences_study" name="autonomous" type="autonomous.py" output="screen"></node> -->
 
 </launch>
