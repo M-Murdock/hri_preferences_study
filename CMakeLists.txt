@@ -19,6 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
   dynamic_reconfigure
   shared_control
   armpy
+  rosbag
 )
 
 ## System dependencies are found with CMake's conventions

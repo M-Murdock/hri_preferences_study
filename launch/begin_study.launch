@@ -2,7 +2,7 @@
 <launch>
 
     <arg name="user_id" default="0"/>
-    <!-- <arg name="auton_condition"/> -->
+    <arg name="auton_condition"/>
 
 
     <!-- Start webcam recording -->
@@ -10,19 +10,19 @@
 
 
     <!-- Full Autonomy -->
-    <!-- <group if="$(eval arg('auton_condition') == 'a')">
+    <group if="$(eval arg('auton_condition') == 'Autonomous')">
         <node pkg="hri_preferences_study" name="autonomous" type="autonomous.py" output="screen"></node>
-    </group> -->
+    </group>
 
     <!-- Teleop -->
-    <!-- <group if="$(eval arg('auton_condition') == 't')">
+    <group if="$(eval arg('auton_condition') == 'Teleop')">
         <node pkg="hri_preferences_study" name="direct_control" type="direct_control.py" output="screen"></node>  
-    </group> -->
+    </group>
 
     <!-- Shared Autonomy -->
-    <!-- <group if="$(eval arg('auton_condition') == 's')">
+    <group if="$(eval arg('auton_condition') == 'Shared')">
         <node pkg="hri_preferences_study" name="shared_control" type="shared_control.py" output="screen"></node>   
-    </group>  -->
+    </group> 
 
       
 </launch>
