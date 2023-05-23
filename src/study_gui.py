@@ -50,9 +50,9 @@ async def run_autonomy_level(config, status_cb):
     #     shared_control.run_shared_control()
     # if config["Condition"] == "Teleop":
     #     direct_control.run_direct_control()
-    # direct_controller = direct_control.Direct_Control()
+    direct_controller = direct_control.Direct_Control()
     # autonomous_controller = autonomous.Autonomous()
-    shared_controller = shared_control.Shared_Control()
+    # shared_controller = shared_control.Shared_Control()
     rospy.spin()
     # try:
     #     while not rospy.is_shutdown():

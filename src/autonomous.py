@@ -41,6 +41,3 @@ class Autonomous:
 
         self.arm.move_to_ee_pose(self.pos) # Move to specified end effector position
         
-
-# if __name__ == "__main__":
-#     main()
