@@ -43,24 +43,14 @@ class BasicLogger:
 
 
 async def run_autonomy_level(config, status_cb):
-    condition = 'auton_condition:=' + str(config["Condition"])
-    # if config["Condition"] == "Autonomous":
-    #     autonomous.run_autonomous()
-    # if config["Condition"] == "Shared":
-    #     shared_control.run_shared_control()
-    # if config["Condition"] == "Teleop":
-    #     direct_control.run_direct_control()
-    direct_controller = direct_control.Direct_Control()
-    # autonomous_controller = autonomous.Autonomous()
-    # shared_controller = shared_control.Shared_Control()
+    print(config["Condition"])
+    if config["Condition"] == "Autonomous":
+        autonomous_controller = autonomous.Autonomous()
+    if config["Condition"] == "Shared":
+        shared_controller = shared_control.Shared_Control()
+    if config["Condition"] == "Teleop":
+        direct_controller = direct_control.Direct_Control()
     rospy.spin()
-    # try:
-    #     while not rospy.is_shutdown():
-    #         direct_controller.set_velocity()
-    #         rospy.sleep(0.1)
-    # except:
-    #     pass
-
             
 def main():
     rospy.init_node("gui", anonymous=True)
