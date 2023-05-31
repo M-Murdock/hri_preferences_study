@@ -2,25 +2,17 @@
 <launch>
 
     <arg name="user_id" default="0"/>
-    <!-- <arg name="auton_condition"/> -->
 
     <!-- Start webcam recording -->
     <node pkg="hri_preferences_study" name="webcam" type="webcam.py" output="screen" args="$(arg user_id)"></node>
 
+    <node pkg="hri_preferences_study" name="study_gui" type="study_gui.py" output="screen"></node>
 
-    <!-- Full Autonomy -->
-    <!-- <group if="$(eval arg('auton_condition') == 'Autonomous')">
-        <node pkg="hri_preferences_study" name="autonomous" type="autonomous.py" output="screen"></node>
-    </group> -->
+    <!-- <include file="$(find hri_preferences_study)/launch/launch_arm.launch">
+    </include> -->
 
-    <!-- Teleop -->
-    <!-- <node pkg="hri_preferences_study" name="direct_control" type="direct_control.py" output="screen"></node>   -->
-
-
-    <!-- Shared Autonomy -->
-    <!-- <group if="$(eval arg('auton_condition') == 'Shared')">
-        <node pkg="hri_preferences_study" name="shared_control" type="shared_control.py" output="screen"></node>   
-    </group>  -->
+    <!-- <include file="$(find hri_preferences_study)/launch/launch_robot.launch">
+    </include> -->
 
       
 </launch>
