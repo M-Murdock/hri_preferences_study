@@ -6,7 +6,6 @@ import sys
 import cv2
 
 if __name__ == "__main__":
-    print(sys.argv)
     try:
         user_id = str(sys.argv[1])
     except:
@@ -18,7 +17,6 @@ if __name__ == "__main__":
     # Define the codec and create VideoWriter object
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
     path = '/home/mavis/catkin_ws/src/hri_preferences_study/src/video_data/webcam1_' + str(user_id) + '_output.avi'
-    print(path)
     out = cv2.VideoWriter(path, fourcc, 20.0, (640, 480))
     
     # loop runs if capturing has been initialized. 
@@ -33,8 +31,8 @@ if __name__ == "__main__":
         # The original input frame is shown in the window 
         cv2.imshow('Original', frame)
         
-        # Wait for 'a' key to stop the program 
-        if cv2.waitKey():
+        # Wait for 'q' to stop the program 
+        if cv2.waitKey(1) & 0xFF == ord('q'):
             break
     
     # Close the window / Release webcam

@@ -1,11 +1,7 @@
 <?xml version="1.0"?>
 <launch>
-    
-    <!-- Start up the robot -->
-    <include file="$(find poli2_launch)/launch/machine1.launch">
-        <remap from="gen2" to="j2s7s300_driver"/>
-        <arg name="start_manipulation" value="true"/>
-        <!-- <arg name="robot_name" value="boop"/> -->
+    <!-- Start up the arm -->
+    <include file="$(find poli2_launch)/launch/manipulation.launch">
     </include>
 
 

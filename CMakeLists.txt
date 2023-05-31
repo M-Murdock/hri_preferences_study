@@ -112,10 +112,10 @@ catkin_python_setup()
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include
+  INCLUDE_DIRS 
   LIBRARIES hri_preferences_study
   CATKIN_DEPENDS roscpp rospy std_msgs  
-  DEPENDS system_lib
+  DEPENDS 
 )
 
 ###########
