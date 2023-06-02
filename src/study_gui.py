@@ -7,6 +7,7 @@ import asyncio
 import os
 import study_runner
 from  study_runner.frames.logging import LoggingFrame, RunLogging
+from study_runner.frames.loggers.rosbag_recorder import RosbagRecorder, RosbagRecorderConfigFrame, get_rosbag_recorder
 import tkinter
 import roslaunch
 import rospy
@@ -30,35 +31,49 @@ class ConditionConfigFrame(tkinter.Frame):
         self._entry.value = state
 
 
-class BasicLogger:
-    def __init__(self, data_dir, config):
-        self._file = open(os.path.join(data_dir, "log.txt"), "w")
+# class BasicLogger:
+#     def __init__(self, data_dir, config):
+#         self._file = open(os.path.join(data_dir, "log.txt"), "w")
 
-    def start(self):
-        self._file.write("started")
+#     def start(self):
+#         self._file.write("started")
 
-    def stop(self):
-        self._file.write("stopped")
-        self._file.close()
+#     def stop(self):
+#         self._file.write("stopped")
+#         self._file.close()
+
+# async def log_trial(config, status_cb):
+#     # do some setup stuff
+#     await setup()
+
+#     # start the actual trial
+#     with RunLogging(config):
+#         await run_trial()
+
+#     # finalize + get ready for next trial
+#     await cleanup()
 
 
 async def run_autonomy_level(config, status_cb):
     print(config["Condition"])
-    if config["Condition"] == "Autonomous":
-        autonomous_controller = autonomous.Autonomous()
-    if config["Condition"] == "Shared":
-        shared_controller = shared_control.Shared_Control()
-    if config["Condition"] == "Teleop":
-        direct_controller = direct_control.Direct_Control()
-    rospy.spin()
+    with RunLogging(config):
+        if config["Condition"] == "Autonomous":
+            autonomous_controller = autonomous.Autonomous()
+        if config["Condition"] == "Shared":
+            shared_controller = shared_control.Shared_Control()
+        if config["Condition"] == "Teleop":
+            direct_controller = direct_control.Direct_Control()
+        rospy.spin()
             
 def main():
     rospy.init_node("gui", anonymous=True)
     root = tkinter.Tk()
     runner = study_runner.StudyRunner(root, run_autonomy_level)
     runner.add_config_frame(ConditionConfigFrame, "Condition")
+    
     logging_frame = runner.add_config_frame(LoggingFrame, "Logging")
-    logging_frame.add_logger("basic", BasicLogger)
+    logging_frame.add_logger_frame(RosbagRecorderConfigFrame)
+    logging_frame.add_logger("recorder", get_rosbag_recorder)
 
     study_runner.runner.main(root)
 

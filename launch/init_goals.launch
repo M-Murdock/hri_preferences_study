@@ -4,21 +4,15 @@
     <arg name="goal_name"/>
     
     <!-- Start up the robot -->
-    <include file="$(find poli2_launch)/launch/machine1.launch">
+    <!-- <include file="$(find poli2_launch)/launch/machine1.launch">
         <remap from="gen2" to="j2s7s300_driver"/>
         <arg name="start_manipulation" value="true"/>
         <arg name="robot_name" value="boop"/>
+    </include> -->
+    <include file="$(find hri_preferences_study)/launch/launch_arm.launch">
     </include>
 
-
-    <!-- Home Arm -->
-    <node pkg="rosservice" type="rosservice" name="global_loc" args="call --wait /j2s7s300_driver/in/home_arm" />
-    
-    <!-- Get controller input -->
-    <node pkg="joy" name="joy_node" type="joy_node" />
-
     <!-- Save goal positions to yaml file -->
-    <node pkg="hri_preferences_study" name="direct_control" type="direct_control.py" output="screen"></node>  
     <node pkg="hri_preferences_study" name="init_goals" type="init_goals.py" output="screen" args="$(arg goal_name)"></node>  
 
 </launch>

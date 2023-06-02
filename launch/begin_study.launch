@@ -4,12 +4,12 @@
     <arg name="user_id" default="0"/>
 
     <!-- Start webcam recording -->
-    <node pkg="hri_preferences_study" name="webcam" type="webcam.py" output="screen" args="$(arg user_id)"></node>
+    <!-- <node pkg="hri_preferences_study" name="webcam" type="webcam.py" output="screen" args="$(arg user_id)"></node> -->
 
     <node pkg="hri_preferences_study" name="study_gui" type="study_gui.py" output="screen"></node>
 
-    <!-- <include file="$(find hri_preferences_study)/launch/launch_arm.launch">
-    </include> -->
+    <include file="$(find hri_preferences_study)/launch/launch_arm.launch">
+    </include>
 
     <!-- <include file="$(find hri_preferences_study)/launch/launch_robot.launch">
     </include> -->

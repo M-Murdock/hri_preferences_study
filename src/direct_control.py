@@ -26,4 +26,3 @@ class Direct_Control:
 
     def callback(self, data):
         self.arm.set_velocity(self.mode.process_input(data).twist)
-        

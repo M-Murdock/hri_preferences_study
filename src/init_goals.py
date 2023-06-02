@@ -6,14 +6,16 @@
 
 import rospy
 import armpy.gen2_teleop
-import teleop_lib.plugins.user_cmd
+# import teleop_lib.plugins.user_cmd
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import PoseStamped
 import numpy as np
 import yaml
 import sys
+import direct_control 
 
 def callback(data, goals_doc):
+    GOAL_TO_SET = "goal1"
     goals_doc.get(GOAL_TO_SET).get('position')['x'] = data.pose.position.x
     goals_doc.get(GOAL_TO_SET).get('position')['y'] = data.pose.position.y
     goals_doc.get(GOAL_TO_SET).get('position')['z'] = data.pose.position.z
@@ -28,7 +30,7 @@ def callback(data, goals_doc):
 
 
 if __name__ == "__main__":
-
+    print("INIT GOALS")
     try: 
         GOAL_TO_SET = str(sys.argv[1])
         goals_doc = None
@@ -36,8 +38,8 @@ if __name__ == "__main__":
         with open("/home/mavis/catkin_ws/src/hri_preferences_study/config/goals.yaml") as f:
             goals_doc = yaml.safe_load(f)
 
-
         rospy.init_node("set_goals", anonymous=True)
+        direct_controller = direct_control.Direct_Control()
         rospy.Subscriber("/j2s7s300_driver/out/tool_pose", PoseStamped, callback, goals_doc)
         rospy.sleep(0.01)
         rospy.spin()

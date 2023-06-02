@@ -29,6 +29,8 @@ class Autonomous:
             pass
 
     def move(self):
+        # self.pos = self.arm.get_current_ee_pose()
+        # self.pos.pose.position.x += 0.1
         self.pos = Pose()
         self.pos.position.x = self.goal_dict.get('position')['x'] 
         self.pos.position.y = self.goal_dict.get('position')['y']
