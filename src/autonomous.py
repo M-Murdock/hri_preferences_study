@@ -41,5 +41,6 @@ class Autonomous:
         self.pos.orientation.z = self.goal_dict.get('orientation')['z']
         self.pos.orientation.w = self.goal_dict.get('orientation')['w']
 
+        print(self.pos)
         self.arm.move_to_ee_pose(self.pos) # Move to specified end effector position
         
