@@ -68,6 +68,7 @@
   <exec_depend>shared_control</exec_depend>
   <exec_depend>armpy</exec_depend>
   <exec_depend>rosbag</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->

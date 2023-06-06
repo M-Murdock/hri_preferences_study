@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   poli2_launch
   joy
   geometry_msgs
+  sensor_msgs
   dynamic_reconfigure
   shared_control
   armpy

@@ -9,15 +9,18 @@ import armpy.arm
 import traceback
 import pickle
 import os
+import yaml
 
 class Autonomous:
-    def __init__(self):
+    def __init__(self, goal):
         try:
+            print("MOVING TO GOAL ", goal)
             moveit_commander.roscpp_initialize(sys.argv)
             self.arm = armpy.arm.Arm()
+            with open('/home/mavis/catkin_ws/src/hri_preferences_study/config/jointstates_goals.yaml', 'r') as file:
+                self.goal = list(yaml.safe_load(file)['goal1'])
+            
             # to set the goals, move arm to desired position, then `rostopic echo /joint_states`:
-            self.goal = [0.5080172525610042, 2.3989328993659362, 3.810842904997834, 2.0779030778687164, 4.201798148814774, 3.874152103063415, 6.318032770043272]
-            # self.goal2 = [0.7520974644948796, 2.5134703978441735, 4.0290772384210305, 2.820384000825374, 5.131428855793169, 3.9699422790480394, -1.2558463689082726]
             self.move()
 
         except:

@@ -9,38 +9,45 @@ import armpy.gen2_teleop
 # import teleop_lib.plugins.user_cmd
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import PoseStamped
+from sensor_msgs.msg import JointState
 import numpy as np
 import yaml
 import sys
 import direct_control 
 
-def callback(data, goals_doc):
-    GOAL_TO_SET = "goal1"
-    goals_doc.get(GOAL_TO_SET).get('position')['x'] = data.pose.position.x
-    goals_doc.get(GOAL_TO_SET).get('position')['y'] = data.pose.position.y
-    goals_doc.get(GOAL_TO_SET).get('position')['z'] = data.pose.position.z
+def eef_callback(data, GOAL_TO_SET):
 
-    goals_doc.get(GOAL_TO_SET).get('orientation')['x'] = data.pose.orientation.x
-    goals_doc.get(GOAL_TO_SET).get('orientation')['y'] = data.pose.orientation.y
-    goals_doc.get(GOAL_TO_SET).get('orientation')['z'] = data.pose.orientation.z
-    goals_doc.get(GOAL_TO_SET).get('orientation')['w'] = data.pose.orientation.w
+    with open('/home/mavis/catkin_ws/src/hri_preferences_study/config/eef_goals.yaml', 'r') as file:
+        goals_doc = yaml.safe_load(file)
 
-    with open("/home/mavis/catkin_ws/src/hri_preferences_study/config/goals.yaml", "w") as f:
+    goals_doc[GOAL_TO_SET] = {'position':{'x': data.pose.position.x, 'y': data.pose.position.y, 'z':data.pose.position.z}, \
+    'orientation':{'x': data.pose.orientation.x, 'y': data.pose.orientation.y, 'z': data.pose.orientation.z, 'w': data.pose.orientation.w}}
+
+    with open("/home/mavis/catkin_ws/src/hri_preferences_study/config/eef_goals.yaml", "w") as f:
         yaml.dump(goals_doc, f)
+
+def joint_callback(data, GOAL_TO_SET):
+
+    with open('/home/mavis/catkin_ws/src/hri_preferences_study/config/jointstates_goals.yaml', 'r') as file:
+        goals_doc = yaml.safe_load(file)
+
+    joints = list(data.position)
+    goals_doc[GOAL_TO_SET] = joints[5:12]
+
+    with open("/home/mavis/catkin_ws/src/hri_preferences_study/config/jointstates_goals.yaml", "w") as f:
+        yaml.dump(goals_doc, f)
+
 
 
 if __name__ == "__main__":
     print("INIT GOALS")
     try: 
         GOAL_TO_SET = str(sys.argv[1])
-        goals_doc = None
-
-        with open("/home/mavis/catkin_ws/src/hri_preferences_study/config/goals.yaml") as f:
-            goals_doc = yaml.safe_load(f)
 
         rospy.init_node("set_goals", anonymous=True)
         direct_controller = direct_control.Direct_Control()
-        rospy.Subscriber("/j2s7s300_driver/out/tool_pose", PoseStamped, callback, goals_doc)
+        rospy.Subscriber("/j2s7s300_driver/out/tool_pose", PoseStamped, eef_callback, GOAL_TO_SET) # record end effector position
+        rospy.Subscriber("/joint_states", JointState, joint_callback, GOAL_TO_SET) # record joint states
         rospy.sleep(0.01)
         rospy.spin()
     except:

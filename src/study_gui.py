@@ -14,11 +14,15 @@ import rospy
 import direct_control
 import shared_control
 import autonomous
+import sys
+import yaml
+
+global GOAL_TO_SET 
 
 class ConditionConfigFrame(tkinter.Frame):
     def __init__(self, parent, _):
         super().__init__(parent)
-        
+
         self._entry = tkinter.StringVar(self, "Autonomous")  # Create a variable for strings, and initialize the variable
         tkinter.Radiobutton(self, text="Autonomous", variable=self._entry, value="Autonomous").pack(anchor='w')
         tkinter.Radiobutton(self, text="Shared", variable=self._entry, value="Shared").pack(anchor='w')
@@ -31,34 +35,37 @@ class ConditionConfigFrame(tkinter.Frame):
         self._entry.value = state
 
 
-# class BasicLogger:
-#     def __init__(self, data_dir, config):
-#         self._file = open(os.path.join(data_dir, "log.txt"), "w")
+class SetGoalFrame(tkinter.Frame):
+    def __init__(self, parent, _):
+        super().__init__(parent)
 
-#     def start(self):
-#         self._file.write("started")
+        # grab all the goals from the goal yaml files
+        with open('/home/mavis/catkin_ws/src/hri_preferences_study/config/jointstates_goals.yaml', 'r') as file:
+            OPTIONS = list(yaml.safe_load(file))
+        # OPTIONS = ["goal1", "goal2", "goal3"]
+        print("OPTIONS=", OPTIONS)
+        
+        # OPTIONS = ["goal1", "goal2", "goal3"] #etc
 
-#     def stop(self):
-#         self._file.write("stopped")
-#         self._file.close()
+        self._entry = tkinter.StringVar(self)
+        self._entry.set(OPTIONS[0]) # default value
 
-# async def log_trial(config, status_cb):
-#     # do some setup stuff
-#     await setup()
+        question_menu = tkinter.OptionMenu(self, self._entry, *OPTIONS)
+        question_menu.pack()
 
-#     # start the actual trial
-#     with RunLogging(config):
-#         await run_trial()
-
-#     # finalize + get ready for next trial
-#     await cleanup()
+    def get_config(self):
+        return {"Goal_Name": self._entry.get()}
+    def set_state(self, state):
+        self._entry.value = state
 
 
 async def run_autonomy_level(config, status_cb):
+    global GOAL_TO_SET
+
     print(config["Condition"])
     with RunLogging(config):
         if config["Condition"] == "Autonomous":
-            autonomous_controller = autonomous.Autonomous()
+            autonomous_controller = autonomous.Autonomous(config["Goal_Name"])
         if config["Condition"] == "Shared":
             shared_controller = shared_control.Shared_Control()
         if config["Condition"] == "Teleop":
@@ -66,10 +73,15 @@ async def run_autonomy_level(config, status_cb):
         rospy.spin()
             
 def main():
+    global GOAL_TO_SET
+    GOAL_TO_SET = str(sys.argv[1])
+
     rospy.init_node("gui", anonymous=True)
     root = tkinter.Tk()
     runner = study_runner.StudyRunner(root, run_autonomy_level)
     runner.add_config_frame(ConditionConfigFrame, "Condition")
+
+    runner.add_config_frame(SetGoalFrame, "Goal")
     
     logging_frame = runner.add_config_frame(LoggingFrame, "Logging")
     logging_frame.add_logger_frame(RosbagRecorderConfigFrame)
