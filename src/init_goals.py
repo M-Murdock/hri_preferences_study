@@ -15,27 +15,30 @@ import sys
 import direct_control 
 import tkinter 
 import study_runner
+import os
 
 def eef_callback(data, GOAL_TO_SET):
 
-    with open('/home/mavis/catkin_ws/src/hri_preferences_study/config/eef_goals.yaml', 'r') as file:
-        goals_doc = yaml.safe_load(file)
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/eef_goals.yaml")
+    with open(path, 'r') as f:
+        goals_doc = yaml.safe_load(f)
 
     goals_doc[GOAL_TO_SET] = {'position':{'x': data.pose.position.x, 'y': data.pose.position.y, 'z':data.pose.position.z}, \
     'orientation':{'x': data.pose.orientation.x, 'y': data.pose.orientation.y, 'z': data.pose.orientation.z, 'w': data.pose.orientation.w}}
 
-    with open("/home/mavis/catkin_ws/src/hri_preferences_study/config/eef_goals.yaml", "w") as f:
+    with open(path, "w") as f:
         yaml.dump(goals_doc, f)
 
 def joint_callback(data, GOAL_TO_SET):
 
-    with open('/home/mavis/catkin_ws/src/hri_preferences_study/config/jointstates_goals.yaml', 'r') as file:
-        goals_doc = yaml.safe_load(file)
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/jointstates_goals.yaml")
+    with open(path, 'r') as f:
+        goals_doc = yaml.safe_load(f)
 
     joints = list(data.position)
     goals_doc[GOAL_TO_SET] = joints[5:12]
 
-    with open("/home/mavis/catkin_ws/src/hri_preferences_study/config/jointstates_goals.yaml", "w") as f:
+    with open(path, "w") as f:
         yaml.dump(goals_doc, f)
 
 class SetGoalFrame(tkinter.Frame):
