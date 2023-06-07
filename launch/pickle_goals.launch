@@ -1,16 +1,12 @@
 <?xml version="1.0"?>
 <launch>
-    
+
     <!-- Start up the robot -->
     <include file="$(find hri_preferences_study)/launch/launch_robot.launch"></include>
     
     <!-- <include file="$(find hri_preferences_study)/launch/launch_arm.launch">
     </include> -->
 
-
-
-
-    <!-- Save goal positions to yaml file -->
-    <node pkg="hri_preferences_study" name="init_goals" type="init_goals.py" output="screen"></node>  
+    <node pkg="hri_preferences_study" name="pickle_goals" type="pickle_goals.py" output="screen"></node>  
 
 </launch>

@@ -6,7 +6,6 @@
 
 import rospy
 import armpy.gen2_teleop
-# import teleop_lib.plugins.user_cmd
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import PoseStamped
 from sensor_msgs.msg import JointState
@@ -14,6 +13,8 @@ import numpy as np
 import yaml
 import sys
 import direct_control 
+import tkinter 
+import study_runner
 
 def eef_callback(data, GOAL_TO_SET):
 
@@ -37,18 +38,58 @@ def joint_callback(data, GOAL_TO_SET):
     with open("/home/mavis/catkin_ws/src/hri_preferences_study/config/jointstates_goals.yaml", "w") as f:
         yaml.dump(goals_doc, f)
 
+class SetGoalFrame(tkinter.Frame):
 
+    def __init__(self, root):
+        super().__init__(root)
+        self._root = root
+        self.grid(sticky="NSEW")
+        root.rowconfigure(0, weight=1)
+        root.columnconfigure(0, weight=1)
+
+        # set up bottom frame with buttons
+        self.start_frame = tkinter.Frame(self)
+        self.start_frame.grid(row=1, column=0, columnspan=2, sticky='esw', padx=2, pady=2)
+
+
+        self.start_button = tkinter.Button(self.start_frame,
+                                           text="Record position",
+                                           command=self._record_button_callback)
+        self.start_button.grid(row=0, column=2, sticky="EW")
+
+        self.quit_button = tkinter.Button(
+            self.start_frame, text="Quit", command=self._quit_button_callback)
+        self.quit_button.grid(row=1, column=1, sticky='ne', padx=5)
+
+        # set up top frame with goal name
+        self.goal_label = tkinter.Label(
+            self.start_frame, text="Goal Name" )
+        self.goal_label.grid(row=0, column=0, sticky="W")
+
+        self.goal_name = tkinter.Entry(
+            self.start_frame, bd=2)
+        self.goal_name.grid(row=0, column=1, sticky="E", pady=5)
+
+    def _quit_button_callback(self):
+        self._root.quit()
+
+    def _record_button_callback(self):
+        print("recording")
+        eef_callback(rospy.wait_for_message("/j2s7s300_driver/out/tool_pose", PoseStamped), self.goal_name.get())
+        joint_callback(rospy.wait_for_message("/joint_states", JointState), self.goal_name.get())
 
 if __name__ == "__main__":
     print("INIT GOALS")
+    
     try: 
-        GOAL_TO_SET = str(sys.argv[1])
-
         rospy.init_node("set_goals", anonymous=True)
+
         direct_controller = direct_control.Direct_Control()
-        rospy.Subscriber("/j2s7s300_driver/out/tool_pose", PoseStamped, eef_callback, GOAL_TO_SET) # record end effector position
-        rospy.Subscriber("/joint_states", JointState, joint_callback, GOAL_TO_SET) # record joint states
-        rospy.sleep(0.01)
+
+        root = tkinter.Tk()
+        recorder = SetGoalFrame(root)
+        study_runner.runner.main(root)
+
         rospy.spin()
     except:
         pass

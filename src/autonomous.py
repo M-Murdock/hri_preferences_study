@@ -18,7 +18,7 @@ class Autonomous:
             moveit_commander.roscpp_initialize(sys.argv)
             self.arm = armpy.arm.Arm()
             with open('/home/mavis/catkin_ws/src/hri_preferences_study/config/jointstates_goals.yaml', 'r') as file:
-                self.goal = list(yaml.safe_load(file)['goal1'])
+                self.goal = list(yaml.safe_load(file)[goal])
             
             # to set the goals, move arm to desired position, then `rostopic echo /joint_states`:
             self.move()
@@ -31,19 +31,19 @@ class Autonomous:
         plan = self.arm.plan_pose(self.goal, is_joint_pos=True) # True if joint states. False if eef
         if plan != None:
             self.arm.move_robot(plan, wait=True)
-            self.save_trajectory("test_trajectory", plan)
+    #         self.save_trajectory("test_trajectory", plan)
 
-    def save_trajectory(self, name, plan):
-        filename = "trajectories/"+name+".pkl"
-        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), filename)
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        with open(path, "wb") as f:
-            pickle.dump(plan, f)
+    # def save_trajectory(self, name, plan):
+    #     filename = "trajectories/"+name+".pkl"
+    #     path = os.path.join(os.path.dirname(os.path.abspath(__file__)), filename)
+    #     os.makedirs(os.path.dirname(path), exist_ok=True)
+    #     with open(path, "wb") as f:
+    #         pickle.dump(plan, f)
 
-    def load_trajectory(self, name):
-        filename = "trajectories/"+name+".pkl"
-        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), filename)
-        with open (path, "rb") as f:
-            plan = pickle.load(f)
-        return plan 
+    # def load_trajectory(self, name):
+    #     filename = "trajectories/"+name+".pkl"
+    #     path = os.path.join(os.path.dirname(os.path.abspath(__file__)), filename)
+    #     with open (path, "rb") as f:
+    #         plan = pickle.load(f)
+    #     return plan 
  

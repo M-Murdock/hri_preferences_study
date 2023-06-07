@@ -42,10 +42,6 @@ class SetGoalFrame(tkinter.Frame):
         # grab all the goals from the goal yaml files
         with open('/home/mavis/catkin_ws/src/hri_preferences_study/config/jointstates_goals.yaml', 'r') as file:
             OPTIONS = list(yaml.safe_load(file))
-        # OPTIONS = ["goal1", "goal2", "goal3"]
-        print("OPTIONS=", OPTIONS)
-        
-        # OPTIONS = ["goal1", "goal2", "goal3"] #etc
 
         self._entry = tkinter.StringVar(self)
         self._entry.set(OPTIONS[0]) # default value
