@@ -9,7 +9,6 @@ import armpy.arm
 import traceback
 import pickle
 import os
-import yaml
 
 class Autonomous:
     def __init__(self, goal):

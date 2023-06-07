@@ -63,6 +63,9 @@ class SetGoalFrame(tkinter.Frame):
         self.quit_button = tkinter.Button(
             self.start_frame, text="Quit", command=self._quit_button_callback)
         self.quit_button.grid(row=1, column=1, sticky='ne', padx=5)
+        self.quit_button = tkinter.Button(
+            self.start_frame, text="Reset", command=self._reset_button_callback)
+        self.quit_button.grid(row=1, column=0, sticky='ne', padx=5)
 
         # set up top frame with goal name
         self.goal_label = tkinter.Label(
@@ -72,6 +75,15 @@ class SetGoalFrame(tkinter.Frame):
         self.goal_name = tkinter.Entry(
             self.start_frame, bd=2)
         self.goal_name.grid(row=0, column=1, sticky="E", pady=5)
+
+    def _reset_button_callback(self):
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/eef_goals.yaml")
+        with open(path, "w") as f:
+            yaml.dump({}, f)
+
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/jointstates_goals.yaml")
+        with open(path, "w") as f:
+            yaml.dump({}, f)
 
     def _quit_button_callback(self):
         self._root.quit()
