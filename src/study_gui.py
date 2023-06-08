@@ -69,11 +69,12 @@ async def run_autonomy_level(config, status_cb):
         rospy.spin()
             
 def main():
-    global GOAL_TO_SET
-    GOAL_TO_SET = str(sys.argv[1])
+    # global GOAL_TO_SET
+    # GOAL_TO_SET = str(sys.argv[1])
 
     rospy.init_node("gui", anonymous=True)
     root = tkinter.Tk()
+    root.geometry("400x400+700+300")
     runner = study_runner.StudyRunner(root, run_autonomy_level)
     runner.add_config_frame(ConditionConfigFrame, "Condition")
 
