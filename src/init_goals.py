@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
-# How to run: 
-#   - This should be launched with init_goals.launch
-#   - Pass the goal name as an argument goal_name (e.g. goal_name:="goal1")
-#   - Then, teleoperate the arm to a goal position and it will be saved to the yaml file
+
 
 import rospy
 import armpy.gen2_teleop
@@ -16,6 +13,7 @@ import direct_control
 import tkinter 
 import study_runner
 import os
+from kinova_msgs.msg import KinovaPose
 
 def eef_callback(data, GOAL_TO_SET):
 
@@ -40,6 +38,19 @@ def joint_callback(data, GOAL_TO_SET):
 
     with open(path, "w") as f:
         yaml.dump(goals_doc, f)
+
+def pose_callback(data, GOAL_TO_SET):
+    print("Pose callback")
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/goal_poses.yaml")
+    with open(path, 'r') as f:
+        goals_doc = yaml.safe_load(f)
+
+    goals_doc[GOAL_TO_SET] = {'X': data.X, 'Y': data.Y, 'Z':data.Z, \
+    'ThetaX': data.ThetaX, 'ThetaY': data.ThetaY, 'ThetaZ': data.ThetaZ}
+
+    with open(path, "w") as f:
+        yaml.dump(goals_doc, f)
+
 
 class SetGoalFrame(tkinter.Frame):
 
@@ -91,7 +102,8 @@ class SetGoalFrame(tkinter.Frame):
     def _record_button_callback(self):
         print("recording")
         eef_callback(rospy.wait_for_message("/j2s7s300_driver/out/tool_pose", PoseStamped), self.goal_name.get())
-        joint_callback(rospy.wait_for_message("/joint_states", JointState), self.goal_name.get())
+        # joint_callback(rospy.wait_for_message("/joint_states", JointState), self.goal_name.get())
+        pose_callback(rospy.wait_for_message("/j2s7s300_driver/out/cartesian_command", KinovaPose), self.goal_name.get())
 
 if __name__ == "__main__":
     print("INIT GOALS")

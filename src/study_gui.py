@@ -16,6 +16,7 @@ import shared_control
 import autonomous
 import sys
 import yaml
+from arm_trajectory import Trajectory
 
 global GOAL_TO_SET 
 
@@ -40,7 +41,7 @@ class SetGoalFrame(tkinter.Frame):
         super().__init__(parent)
 
         # grab all the goals from the goal yaml files
-        with open('/home/mavis/catkin_ws/src/hri_preferences_study/config/jointstates_goals.yaml', 'r') as file:
+        with open('/home/mavis/catkin_ws/src/hri_preferences_study/config/eef_goals.yaml', 'r') as file:
             OPTIONS = list(yaml.safe_load(file))
 
         self._entry = tkinter.StringVar(self)
@@ -54,6 +55,36 @@ class SetGoalFrame(tkinter.Frame):
     def set_state(self, state):
         self._entry.value = state
 
+# override the study runner to record arm trajectories
+class HRIStudyRunner(study_runner.StudyRunner):
+    def __init__(self, root, trial_runner):
+        study_runner.StudyRunner.__init__(self, root, trial_runner)
+        self.home_button = tkinter.Button(self.start_frame,
+                                           text="Return Home",
+                                           command=self._home_button_callback)
+        self.home_button.grid(row=1, column=1, columnspan=2, sticky="EW")
+
+    def _cancel_button_callback(self):
+        # stop recording the arm poses
+        try:
+            self.trajectory_recorder.stop_recording()
+        except:
+            pass
+        study_runner.StudyRunner._cancel_button_callback(self)
+
+    def _start_button_callback(self):
+        # start recording the arm's trajectory
+        self.trajectory_recorder = Trajectory()
+        self.trajectory_recorder.record()
+        study_runner.StudyRunner._start_button_callback(self)
+
+    def _home_button_callback(self):
+        try:
+            # move back to home position by executing reverse trajectory
+            print("homing...")
+            self.trajectory_recorder.execute_reverse_trajectory()
+        except:
+            pass
 
 async def run_autonomy_level(config, status_cb):
     global GOAL_TO_SET
@@ -69,13 +100,11 @@ async def run_autonomy_level(config, status_cb):
         rospy.spin()
             
 def main():
-    # global GOAL_TO_SET
-    # GOAL_TO_SET = str(sys.argv[1])
 
     rospy.init_node("gui", anonymous=True)
     root = tkinter.Tk()
     root.geometry("400x400+700+300")
-    runner = study_runner.StudyRunner(root, run_autonomy_level)
+    runner = HRIStudyRunner(root, run_autonomy_level)
     runner.add_config_frame(ConditionConfigFrame, "Condition")
 
     runner.add_config_frame(SetGoalFrame, "Goal")
