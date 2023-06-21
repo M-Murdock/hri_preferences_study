@@ -14,8 +14,9 @@ from sensor_msgs.msg import Joy
 
 class Direct_Control:
     def __init__(self):
-        with open("/home/mavis/catkin_ws/src/hri_preferences_study/config/XYZMode.yaml") as f:
-            self.cfg = yaml.safe_load(f)
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/XYZMode.yaml")
+        with open(path, 'r') as file:
+            self.cfg = yaml.safe_load(file)
 
         self.cmd = None
 

@@ -17,7 +17,8 @@ class Autonomous:
             moveit_commander.roscpp_initialize(sys.argv)
             self.arm = armpy.arm.Arm()
             
-            with open('/home/mavis/catkin_ws/src/hri_preferences_study/config/goal_poses.yaml', 'r') as file:
+            path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/goal_poses.yaml")
+            with open(path, 'r') as file:
                 self.goal = yaml.safe_load(file)[goal]
             
             self.move()

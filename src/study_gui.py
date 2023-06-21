@@ -41,7 +41,8 @@ class SetGoalFrame(tkinter.Frame):
         super().__init__(parent)
 
         # grab all the goals from the goal yaml files
-        with open('/home/mavis/catkin_ws/src/hri_preferences_study/config/eef_goals.yaml', 'r') as file:
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/eef_goals.yaml")
+        with open(path, 'r') as file:
             OPTIONS = list(yaml.safe_load(file))
 
         self._entry = tkinter.StringVar(self)

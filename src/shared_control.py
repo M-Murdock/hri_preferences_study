@@ -47,7 +47,8 @@ class Shared_Control:
                 self.goals_xyz.append((self.output.get(goal).get('position')['x'], self.output.get(goal).get('position')['y'], self.output.get(goal).get('position')['z']))
 
         # get the controller mapping
-        with open("/home/mavis/catkin_ws/src/hri_preferences_study/config/XYZMode.yaml") as f:
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/XYZMode.yaml")
+        with open(path, 'r') as f:
             self.cfg = yaml.safe_load(f)
 
         self.cmd = None
