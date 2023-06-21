@@ -27,18 +27,6 @@ def eef_callback(data, GOAL_TO_SET):
     with open(path, "w") as f:
         yaml.dump(goals_doc, f)
 
-def joint_callback(data, GOAL_TO_SET):
-
-    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/jointstates_goals.yaml")
-    with open(path, 'r') as f:
-        goals_doc = yaml.safe_load(f)
-
-    joints = list(data.position)
-    goals_doc[GOAL_TO_SET] = joints[5:12]
-
-    with open(path, "w") as f:
-        yaml.dump(goals_doc, f)
-
 def pose_callback(data, GOAL_TO_SET):
     print("Pose callback")
     path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/goal_poses.yaml")
@@ -102,7 +90,6 @@ class SetGoalFrame(tkinter.Frame):
     def _record_button_callback(self):
         print("recording")
         eef_callback(rospy.wait_for_message("/j2s7s300_driver/out/tool_pose", PoseStamped), self.goal_name.get())
-        # joint_callback(rospy.wait_for_message("/joint_states", JointState), self.goal_name.get())
         pose_callback(rospy.wait_for_message("/j2s7s300_driver/out/cartesian_command", KinovaPose), self.goal_name.get())
 
 if __name__ == "__main__":

@@ -17,6 +17,7 @@ import autonomous
 import sys
 import yaml
 from arm_trajectory import Trajectory
+import webcam
 
 global GOAL_TO_SET 
 
@@ -64,8 +65,10 @@ class HRIStudyRunner(study_runner.StudyRunner):
                                            text="Return Home",
                                            command=self._home_button_callback)
         self.home_button.grid(row=1, column=1, columnspan=2, sticky="EW")
+        self.user_id = 0
 
     def _cancel_button_callback(self):
+        self.webcam.quit()
         # stop recording the arm poses
         try:
             self.trajectory_recorder.stop_recording()
@@ -74,6 +77,10 @@ class HRIStudyRunner(study_runner.StudyRunner):
         study_runner.StudyRunner._cancel_button_callback(self)
 
     def _start_button_callback(self):
+        # create webcam
+        self.webcam = webcam.Webcam(self.user_id)
+        self.webcam.start()
+
         # start recording the arm's trajectory
         self.trajectory_recorder = Trajectory()
         self.trajectory_recorder.record()
@@ -113,6 +120,9 @@ def main():
     logging_frame = runner.add_config_frame(LoggingFrame, "Logging")
     logging_frame.add_logger_frame(RosbagRecorderConfigFrame)
     logging_frame.add_logger("recorder", get_rosbag_recorder)
+
+    # set the user id (equivalent to the one created by StudyRunner)
+    runner.user_id = logging_frame.user_id_var.get()
 
     study_runner.runner.main(root)
 
