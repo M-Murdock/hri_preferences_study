@@ -10,5 +10,6 @@
 
     <node pkg="hri_preferences_study" name="study_gui" type="study_gui.py" output="screen"></node>
     <node pkg="hri_preferences_study" name="estop" type="estop.py" output="screen"></node>
+    <node pkg="hri_preferences_study" name="home" type="home.py" output="screen"></node>
       
 </launch>

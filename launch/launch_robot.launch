@@ -10,8 +10,5 @@
     <!-- Collect Data -->
     <node pkg="joy" name="joy_node" type="joy_node" />
 
-    <!-- Home Arm -->
-    <node pkg="rosservice" type="rosservice" name="global_loc" args="call --wait /j2s7s300_driver/in/home_arm" />
-
 
 </launch>

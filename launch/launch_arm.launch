@@ -4,10 +4,6 @@
     <include file="$(find poli2_launch)/launch/manipulation.launch">
     </include>
 
-
-    <!-- Home Arm -->
-    <node pkg="rosservice" type="rosservice" name="global_loc" args="call --wait /j2s7s300_driver/in/home_arm" />
-    
     <!-- Get controller input -->
     <node pkg="joy" name="joy_node" type="joy_node" />
 

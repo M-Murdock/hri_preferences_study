@@ -38,19 +38,15 @@ class Shared_Control:
         path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/eef_goals.yaml")
         with open(path, 'r') as f:
             self.output = yaml.safe_load(f)
-
             self.goals_xyz = []
             self.goal_names = []
-            for goal in self.output:
-                # print(goal)
-                self.goal_names.append(goal)
-                self.goals_xyz.append((self.output.get(goal).get('position')['x'], self.output.get('goal1').get('position')['y'], self.output.get('goal1').get('position')['z']))
-            # print(goals_xyz)
-            # read in goals from yaml file
-            # self.pos1_xyz = (self.output.get('goal1') .get('position')['x'], self.output.get('goal1') .get('position')['y'], self.output.get('goal1') .get('position')['z'])
-            # self.pos2_xyz = (self.output.get('goal2').get('position')['x'], self.output.get('goal2').get('position')['y'], self.output.get('goal2').get('position')['z'])
-            # self.pos3_xyz = (self.output.get('goal3').get('position')['x'], self.output.get('goal3').get('position')['y'], self.output.get('goal3').get('position')['z'])
 
+            # save the x/y/z coordinates of each goal
+            for goal in self.output:
+                self.goal_names.append(goal)
+                self.goals_xyz.append((self.output.get(goal).get('position')['x'], self.output.get(goal).get('position')['y'], self.output.get(goal).get('position')['z']))
+
+        # get the controller mapping
         with open("/home/mavis/catkin_ws/src/hri_preferences_study/config/XYZMode.yaml") as f:
             self.cfg = yaml.safe_load(f)
 
@@ -81,6 +77,7 @@ class Shared_Control:
 
         try:
             while not rospy.is_shutdown() and not has_reached_goal:
+                print("LISTENING FOR CONTROLLER INPUT")
                 # wait for user's command
                 position = rospy.wait_for_message('/j2s7s300_driver/out/tool_pose', PoseStamped) # wait for robot's position
                 
@@ -95,10 +92,10 @@ class Shared_Control:
                 # ------------------------------
                 action_space = [(-1, -1, -1), (-1, -1, 0), (-1, -1, 1), (-1, 0, -1), (-1, 0, 0), (-1, 0, 1), (-1, 1, -1), (-1, 1, 0), (-1, 1, 1), (0, -1, -1), (0, -1, 0), (0, -1, 1), (0, 0, -1), (0, 0, 0), (0, 0, 1), (0, 1, -1), (0, 1, 0), (0, 1, 1), (1, -1, -1), (1, -1, 0), (1, -1, 1), (1, 0, -1), (1, 0, 0), (1, 0, 1), (1, 1, -1), (1, 1, 0), (1, 1, 1)]
                 policies = []
-                for goal in self.goals_xyz:
+
+                for goal in self.goals_xyz: # create policy for every goal position
                     policies.append(ArmPolicy(goal, action_space))
-                # policies = [ArmPolicy(self.pos1_xyz, action_space), ArmPolicy(self.pos2_xyz, action_space), ArmPolicy(self.pos3_xyz, action_space)] # define all our goals
-                print(policies)
+                
                 pred = MaxEntPredictor(policies)
                 policy = SharedAutoPolicy(policies, list(range(len(action_space))))
 
@@ -132,44 +129,30 @@ class Shared_Control:
                 
                 # if we're very close to a goal, stop.
                 i = 0
-                goal = None
+                pred_goal = None
                 for goal in self.goals_xyz:
                     if math.dist(state, goal) < self.DIST_THRESHOLD: 
                         has_reached_goal = True
-                        goal = self.goal_names[i]
-                        print("The predicted goal is: ", goal)     
+                        pred_goal = self.goal_names[i]
+                        print("The predicted goal is: ", pred_goal)     
                         i += 1
-                # if math.dist(state, pos1_xyz) < DIST_THRESHOLD: 
-                #     has_reached_goal = True
-                #     print("The predicted goal is: GOAL1")     
-                #     goal = 'goal1'    
-                # elif math.dist(state, pos2_xyz) < DIST_THRESHOLD: 
-                #     has_reached_goal = True
-                #     print("The predicted goal is: GOAL2")
-                #     goal = 'goal2'
-                # elif math.dist(state, pos3_xyz) < DIST_THRESHOLD:
-                #     has_reached_goal = True
-                #     print("The predicted goal is: GOAL3")
-                #     goal = 'goal3'
+
 
             print("DONE")
-            rospy.sleep(0.1)
+            zero = Twist()
+            zero.linear.x = 0
+            zero.linear.y = 0
+            zero.linear.z = 0
+            self.arm.set_velocity(zero)
+
+            rospy.sleep(0.2)
+
             # once we've predicted the goal, move to the goal position
-            auton_arm = autonomous.Autonomous(goal)
-            print("MOVED TO POSITION")
-            # pos = Pose()
-            # pos.position.x = self.output.get(goal).get('position')['x'] 
-            # pos.position.y = self.output.get(goal).get('position')['y']
-            # pos.position.z = self.output.get(goal).get('position')['z']
+            auton_arm = autonomous.Autonomous(pred_goal)
 
-            # pos.orientation.x = self.output.get(goal).get('orientation')['x']
-            # pos.orientation.y = self.output.get(goal).get('orientation')['y']
-            # pos.orientation.z = self.output.get(goal).get('orientation')['z']
-            # pos.orientation.w = self.output.get(goal).get('orientation')['w']
+            rospy.sleep(0.3)
 
-            # auton_arm.move_to_ee_pose(pos)
-                    
-        
+
         except:
             traceback.print_exc()
             pass
