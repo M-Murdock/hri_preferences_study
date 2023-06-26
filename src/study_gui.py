@@ -60,7 +60,9 @@ class SetGoalFrame(tkinter.Frame):
 # override the study runner to record arm trajectories
 class HRIStudyRunner(study_runner.StudyRunner):
     def __init__(self, root, trial_runner):
-        study_runner.StudyRunner.__init__(self, root, trial_runner)
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/study_config.yaml")
+        study_runner.StudyRunner.__init__(self, root, trial_runner, initial_config_file=path)
+        self.save_config_button.destroy()
         self.home_button = tkinter.Button(self.start_frame,
                                            text="Return Home",
                                            command=self._home_button_callback)
@@ -75,6 +77,9 @@ class HRIStudyRunner(study_runner.StudyRunner):
         except:
             pass
         study_runner.StudyRunner._cancel_button_callback(self)
+    
+    def _save_config(self): # we don't need to have a save config button
+        pass
 
     def _start_button_callback(self):
         # create webcam
@@ -94,9 +99,59 @@ class HRIStudyRunner(study_runner.StudyRunner):
         except:
             pass
 
+
+class SetUserID(LoggingFrame):
+    def __init__(self, parent, initial_config={}):
+        LOGGING_CONFIG_NAME = 'logging'
+        super().__init__(parent, initial_config)
+        initial_config = initial_config.get(LOGGING_CONFIG_NAME, {})
+        self._initial_config = initial_config
+
+        self.left_column = tkinter.Frame(self)
+        self.left_column.grid(row=0, column=0, sticky='nesw')
+        self.left_column.columnconfigure(0, weight=1)
+
+        self.rowconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1)
+
+
+        self.logging_frame = tkinter.LabelFrame(self.left_column, text='User ID')
+        base_dir = initial_config.get('base_dir', os.path.expanduser("~"))
+
+        # choose user id
+        self.user_id_var = tkinter.StringVar()
+        self.user_id_var.set(0)
+        self.user_id_entry = tkinter.Entry(
+            self.logging_frame, textvariable=self.user_id_var)
+        self.user_id_entry.grid(row=2, column=1, sticky="nwe")
+        self.user_id_label = tkinter.Label(self.logging_frame, text='')
+        self.user_id_label.grid(row=2, column=0, sticky="nw")
+ 
+        self.user_id_auto_var = tkinter.IntVar()
+        self.user_id_auto_var.set(False)
+
+
+        # initialize fields
+        self.logging_frame.columnconfigure(1, weight=1)
+        self.logging_frame.grid(row=0, column=0, padx=1, pady=1, sticky='nesw')
+        self.loggers = []
+        self.added_logger_names = []
+
+    def add_logger_frame(self, frame_fn, side='left', **kwargs):
+        parent = self.logging_frame
+        frame = frame_fn(parent, self._initial_config)
+        self.loggers.append(frame)
+        return frame
+
+    def _validate_user_id(self, *_):
+        pass
+    def _update_user_id(self):
+        pass
+
 async def run_autonomy_level(config, status_cb):
     global GOAL_TO_SET
 
+    print(config)
     print(config["Condition"])
     with RunLogging(config):
         if config["Condition"] == "Autonomous":
@@ -117,7 +172,9 @@ def main():
 
     runner.add_config_frame(SetGoalFrame, "Goal")
     
-    logging_frame = runner.add_config_frame(LoggingFrame, "Logging")
+    # logging_frame = runner.add_config_frame(LoggingFrame, "Logging")
+    # logging_frame.add_logger_frame(RosbagRecorderConfigFrame)
+    logging_frame = runner.add_config_frame(SetUserID, "Logging")
     logging_frame.add_logger_frame(RosbagRecorderConfigFrame)
     logging_frame.add_logger("recorder", get_rosbag_recorder)
 

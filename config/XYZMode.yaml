@@ -6,7 +6,7 @@ axes:
     output: AXIS_Y
     scale: -1.0
   - deadzone: 0.0
-    output: ''
+    output: 'CLOSE_GRIPPER'
     scale: 1.0
   - deadzone: 0.0
     output: ''
@@ -15,7 +15,7 @@ axes:
     output: 'AXIS_Z'
     scale: 1.0
   - deadzone: 0.0
-    output: ''
+    output: 'OPEN_GRIPPER'
     scale: 1.0
   - deadzone: 0.0
     output: 'AXIS_YAW'
@@ -24,16 +24,14 @@ axes:
     output: 'AXIS_ROLL'
     scale: 1.0
 buttons:
-  - output: ''
-  - output: ''
-  - output: ''
-  - output: ''
-  - output: 'CLOSE_GRIPPER'
-  - output: ''
-  - output: 'OPEN_GRIPPER'
-  - output: ''
-  - output: ''
-  - output: ''
-  - output: ''
-  - output: ''
-  - output: ''
+- output: ''
+- output: ''
+- output: ''
+- output: ''
+- output: OPEN_GRIPPER
+- output: CLOSE_GRIPPER
+- output: ''
+- output: ''
+- output: ''
+- output: ''
+- output: ''

@@ -80,7 +80,7 @@ class SetGoalFrame(tkinter.Frame):
         with open(path, "w") as f:
             yaml.dump({}, f)
 
-        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/jointstates_goals.yaml")
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/goal_poses.yaml")
         with open(path, "w") as f:
             yaml.dump({}, f)
 
