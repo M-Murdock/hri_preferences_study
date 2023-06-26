@@ -24,7 +24,8 @@ class Webcam:
         
         # Define the codec and create VideoWriter object
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        path = '/home/mavis/video_recording/user_' + str(self.user_id) + '.avi'
+        # path = '/home/mavis/video_recording/user_' + str(self.user_id) + '.avi'
+        path = "/" + str(self.user_id) + '.avi'
         self.out = cv2.VideoWriter(path, fourcc, 20.0, (640, 480))
         
         # loop runs if capturing has been initialized. 

@@ -29,7 +29,7 @@ class ConditionConfigFrame(tkinter.Frame):
         tkinter.Radiobutton(self, text="Autonomous", variable=self._entry, value="Autonomous").pack(anchor='w')
         tkinter.Radiobutton(self, text="Shared", variable=self._entry, value="Shared").pack(anchor='w')
         tkinter.Radiobutton(self, text="Teleop", variable=self._entry, value="Teleop").pack(anchor='w')
-        print(self._entry)
+        # print(self._entry)
 
     def get_config(self):
         return {"Condition": self._entry.get()}
@@ -83,7 +83,7 @@ class HRIStudyRunner(study_runner.StudyRunner):
 
     def _start_button_callback(self):
         # create webcam
-        self.webcam = webcam.Webcam(self.user_id)
+        self.webcam = webcam.Webcam(self.get_config()['logging']['data_dir'])
         self.webcam.start()
 
         # start recording the arm's trajectory
@@ -151,8 +151,7 @@ class SetUserID(LoggingFrame):
 async def run_autonomy_level(config, status_cb):
     global GOAL_TO_SET
 
-    print(config)
-    print(config["Condition"])
+
     with RunLogging(config):
         if config["Condition"] == "Autonomous":
             autonomous_controller = autonomous.Autonomous(config["Goal_Name"])
@@ -168,15 +167,17 @@ def main():
     root = tkinter.Tk()
     root.geometry("400x400+700+300")
     runner = HRIStudyRunner(root, run_autonomy_level)
+    logging_frame = runner.add_config_frame(SetUserID, "Logging")
+    logging_frame.add_logger_frame(RosbagRecorderConfigFrame)
+    logging_frame.add_logger("recorder", get_rosbag_recorder)
+
     runner.add_config_frame(ConditionConfigFrame, "Condition")
 
     runner.add_config_frame(SetGoalFrame, "Goal")
     
     # logging_frame = runner.add_config_frame(LoggingFrame, "Logging")
     # logging_frame.add_logger_frame(RosbagRecorderConfigFrame)
-    logging_frame = runner.add_config_frame(SetUserID, "Logging")
-    logging_frame.add_logger_frame(RosbagRecorderConfigFrame)
-    logging_frame.add_logger("recorder", get_rosbag_recorder)
+
 
     # set the user id (equivalent to the one created by StudyRunner)
     runner.user_id = logging_frame.user_id_var.get()
