@@ -11,6 +11,7 @@ import yaml
 import teleop_lib.input_profile
 from sensor_msgs.msg import Joy
 import os
+import armpy.gripper
 
 
 class Direct_Control:
@@ -21,6 +22,8 @@ class Direct_Control:
 
         self.cmd = None
 
+        self.gripper = armpy.gripper.Gripper()
+
         self.mode = teleop_lib.input_profile.build_profile(self.cfg)
         rospy.Subscriber("/joy", Joy, self.callback)
 
@@ -28,3 +31,9 @@ class Direct_Control:
 
     def callback(self, data):
         self.arm.set_velocity(self.mode.process_input(data).twist)
+
+    def open_gripper(self):
+        self.gripper.open()
+
+    def close_gripper(self):
+        self.gripper.close()

@@ -19,11 +19,13 @@ import sys
 from sensor_msgs.msg import Joy
 import os
 import autonomous
+import armpy.gripper
 
 
 class Shared_Control:
     def __init__(self):
         self.arm = armpy.gen2_teleop.Gen2Teleop(ns="/j2s7s300_driver")
+        self.gripper = armpy.gripper.Gripper()
 
         moveit_commander.roscpp_initialize(sys.argv)
 
@@ -56,7 +58,13 @@ class Shared_Control:
         self.mode = teleop_lib.input_profile.build_profile(self.cfg)
         rospy.Subscriber("/joy", Joy, self.callback)
 
-        self.run_shared_control()
+        # self.run_shared_control()
+
+    def open_gripper(self):
+        self.gripper.open()
+
+    def close_gripper(self):
+        self.gripper.close()
 
     def convert_actions(self, actions): # convert action array to the correct format
         for i in range(0, len(actions)):

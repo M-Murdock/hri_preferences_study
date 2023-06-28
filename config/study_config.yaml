@@ -1,6 +1,7 @@
 logging:
   added_loggers:
   - recorder
+  - video_recorder
   auto: false
   base_dir: /home/mavis
   rosbag:

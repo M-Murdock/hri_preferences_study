@@ -24,7 +24,7 @@ class Webcam:
         
         # Define the codec and create VideoWriter object
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        # path = '/home/mavis/video_recording/user_' + str(self.user_id) + '.avi'
+
         path = "/" + str(self.user_id) + '.avi'
         self.out = cv2.VideoWriter(path, fourcc, 20.0, (640, 480))
         
@@ -40,14 +40,7 @@ class Webcam:
             # The original input frame is shown in the window 
             cv2.imshow('Original', frame)
         
-            # Wait for 'q' to stop the program 
-            # if cv2.waitKey(1) & 0xFF == ord('q'):
-            #     break
-            if cv2.waitKey(1) and (not self.running):
-                break
-            # if cv2.waitKey(0):
-            #     break
-            # self.thread.join()
+
 
         # Close the window / Release webcam
         self.cap.release()

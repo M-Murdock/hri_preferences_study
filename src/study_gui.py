@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-# roslaunch example taken from here: http://wiki.ros.org/roslaunch/API%20Usage
-
 
 import asyncio
 import os
@@ -18,9 +16,10 @@ import sys
 import yaml
 from arm_trajectory import Trajectory
 import webcam
+import kinova_msgs.srv
+from video_recorder import get_video_recorder
 
-global GOAL_TO_SET 
-
+# 
 class ConditionConfigFrame(tkinter.Frame):
     def __init__(self, parent, _):
         super().__init__(parent)
@@ -63,14 +62,46 @@ class HRIStudyRunner(study_runner.StudyRunner):
         path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/study_config.yaml")
         study_runner.StudyRunner.__init__(self, root, trial_runner, initial_config_file=path)
         self.save_config_button.destroy()
+        self.reverse_button = tkinter.Button(self.start_frame,
+                                           text="Reverse Trajectory",
+                                           command=self._reverse_button_callback)
+        self.reverse_button.grid(row=1, column=1, columnspan=2, sticky="EW")
+
+        self.start_pos_button = tkinter.Button(self.start_frame,
+                                           text="Go To Start Position",
+                                           command=self._start_pos_button_callback)
+        self.start_pos_button.grid(row=1, column=0, columnspan=1, sticky="EW")
+
+        self.estop_button = tkinter.Button(self.start_frame,
+                                           text="Estop", bg = "red",
+                                           command=self._estop_button_callback)
+        self.estop_button.grid(row=2, column=0, columnspan=1, sticky="EW")
+
         self.home_button = tkinter.Button(self.start_frame,
-                                           text="Return Home",
+                                           text="Home", bg = "yellow",
                                            command=self._home_button_callback)
-        self.home_button.grid(row=1, column=1, columnspan=2, sticky="EW")
+        self.home_button.grid(row=2, column=1, columnspan=1, sticky="EW")
+
         self.user_id = 0
 
+
+    def _home_button_callback(self):
+        rospy.wait_for_service("/j2s7s300_driver/in/home_arm")
+        home_arm = rospy.ServiceProxy("/j2s7s300_driver/in/home_arm", kinova_msgs.srv.HomeArm)
+        home_arm()
+
+    def _estop_button_callback(self):
+        rospy.wait_for_service("/j2s7s300_driver/in/stop")
+        stop_arm = rospy.ServiceProxy("/j2s7s300_driver/in/stop", kinova_msgs.srv.Stop)
+        stop_arm()
+
+    def _start_pos_button_callback(self):
+        self.autonomous = autonomous.Autonomous([0.3918577790260315, -0.12015067785978317, 0.639392614364624, -0.19061850011348724, 0.7474631071090698, 2.301758050918579], file=False)
+        self.autonomous.open_gripper()
+        self.autonomous.move()
+
     def _cancel_button_callback(self):
-        self.webcam.quit()
+        # self.webcam.quit()
         # stop recording the arm poses
         try:
             self.trajectory_recorder.stop_recording()
@@ -83,18 +114,18 @@ class HRIStudyRunner(study_runner.StudyRunner):
 
     def _start_button_callback(self):
         # create webcam
-        self.webcam = webcam.Webcam(self.get_config()['logging']['data_dir'])
-        self.webcam.start()
+        # self.webcam = webcam.Webcam(self.get_config()['logging']['data_dir'])
+        # self.webcam.start()
 
         # start recording the arm's trajectory
         self.trajectory_recorder = Trajectory()
         self.trajectory_recorder.record()
         study_runner.StudyRunner._start_button_callback(self)
 
-    def _home_button_callback(self):
+    def _reverse_button_callback(self):
         try:
             # move back to home position by executing reverse trajectory
-            print("homing...")
+            print("reversing...")
             self.trajectory_recorder.execute_reverse_trajectory()
         except:
             pass
@@ -149,27 +180,38 @@ class SetUserID(LoggingFrame):
         pass
 
 async def run_autonomy_level(config, status_cb):
-    global GOAL_TO_SET
 
 
     with RunLogging(config):
         if config["Condition"] == "Autonomous":
             autonomous_controller = autonomous.Autonomous(config["Goal_Name"])
+            autonomous_controller.close_gripper()
+            autonomous_controller.move()
+            autonomous_controller.open_gripper()
         if config["Condition"] == "Shared":
             shared_controller = shared_control.Shared_Control()
+            shared_controller.close_gripper()
+            shared_controller.run_shared_control()
         if config["Condition"] == "Teleop":
             direct_controller = direct_control.Direct_Control()
+            direct_controller.close_gripper()
         rospy.spin()
-            
+
+def disable_event():
+    pass 
+
 def main():
 
     rospy.init_node("gui", anonymous=True)
     root = tkinter.Tk()
     root.geometry("400x400+700+300")
+    root.protocol("WM_DELETE_WINDOW", disable_event)
+
     runner = HRIStudyRunner(root, run_autonomy_level)
     logging_frame = runner.add_config_frame(SetUserID, "Logging")
     logging_frame.add_logger_frame(RosbagRecorderConfigFrame)
     logging_frame.add_logger("recorder", get_rosbag_recorder)
+    logging_frame.add_logger("video_recorder", get_video_recorder)
 
     runner.add_config_frame(ConditionConfigFrame, "Condition")
 
