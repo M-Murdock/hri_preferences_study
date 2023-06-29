@@ -29,8 +29,18 @@ class Direct_Control:
 
         self.arm = armpy.gen2_teleop.Gen2Teleop(ns="/j2s7s300_driver")
 
+        self.allow_gripper_control = False
+
     def callback(self, data):
+        # print(data)
+        if self.allow_gripper_control:
+            if data.buttons[4] == 1: 
+                self.open_gripper() 
+            if data.buttons[5] == 1:
+                self.close_gripper()
+
         self.arm.set_velocity(self.mode.process_input(data).twist)
+
 
     def open_gripper(self):
         self.gripper.open()

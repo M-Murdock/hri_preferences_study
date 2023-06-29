@@ -18,6 +18,7 @@ from arm_trajectory import Trajectory
 import webcam
 import kinova_msgs.srv
 from video_recorder import get_video_recorder
+import time
 
 # 
 class ConditionConfigFrame(tkinter.Frame):
@@ -28,7 +29,7 @@ class ConditionConfigFrame(tkinter.Frame):
         tkinter.Radiobutton(self, text="Autonomous", variable=self._entry, value="Autonomous").pack(anchor='w')
         tkinter.Radiobutton(self, text="Shared", variable=self._entry, value="Shared").pack(anchor='w')
         tkinter.Radiobutton(self, text="Teleop", variable=self._entry, value="Teleop").pack(anchor='w')
-        # print(self._entry)
+
 
     def get_config(self):
         return {"Condition": self._entry.get()}
@@ -96,12 +97,11 @@ class HRIStudyRunner(study_runner.StudyRunner):
         stop_arm()
 
     def _start_pos_button_callback(self):
-        self.autonomous = autonomous.Autonomous([0.3918577790260315, -0.12015067785978317, 0.639392614364624, -0.19061850011348724, 0.7474631071090698, 2.301758050918579], file=False)
+        self.autonomous = autonomous.Autonomous([0.5415371060371399, 0.041244372725486755, 0.13297860324382782, 1.4718962907791138, 0.9209043979644775, 1.4728060960769653], file=False)
         self.autonomous.open_gripper()
         self.autonomous.move()
 
     def _cancel_button_callback(self):
-        # self.webcam.quit()
         # stop recording the arm poses
         try:
             self.trajectory_recorder.stop_recording()
@@ -113,10 +113,6 @@ class HRIStudyRunner(study_runner.StudyRunner):
         pass
 
     def _start_button_callback(self):
-        # create webcam
-        # self.webcam = webcam.Webcam(self.get_config()['logging']['data_dir'])
-        # self.webcam.start()
-
         # start recording the arm's trajectory
         self.trajectory_recorder = Trajectory()
         self.trajectory_recorder.record()
@@ -185,9 +181,10 @@ async def run_autonomy_level(config, status_cb):
     with RunLogging(config):
         if config["Condition"] == "Autonomous":
             autonomous_controller = autonomous.Autonomous(config["Goal_Name"])
-            autonomous_controller.close_gripper()
+            # autonomous_controller.close_gripper()
+            time.sleep(2)
             autonomous_controller.move()
-            autonomous_controller.open_gripper()
+            # autonomous_controller.open_gripper()
         if config["Condition"] == "Shared":
             shared_controller = shared_control.Shared_Control()
             shared_controller.close_gripper()
@@ -195,6 +192,7 @@ async def run_autonomy_level(config, status_cb):
         if config["Condition"] == "Teleop":
             direct_controller = direct_control.Direct_Control()
             direct_controller.close_gripper()
+            direct_controller.allow_gripper_control = True
         rospy.spin()
 
 def disable_event():
@@ -217,9 +215,6 @@ def main():
 
     runner.add_config_frame(SetGoalFrame, "Goal")
     
-    # logging_frame = runner.add_config_frame(LoggingFrame, "Logging")
-    # logging_frame.add_logger_frame(RosbagRecorderConfigFrame)
-
 
     # set the user id (equivalent to the one created by StudyRunner)
     runner.user_id = logging_frame.user_id_var.get()

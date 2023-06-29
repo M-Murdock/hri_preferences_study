@@ -39,6 +39,17 @@ def pose_callback(data, GOAL_TO_SET):
     with open(path, "w") as f:
         yaml.dump(goals_doc, f)
 
+def jointstate_callback(data, GOAL_TO_SET):
+    print("Pose callback")
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/joint_states.yaml")
+    with open(path, 'r') as f:
+        goals_doc = yaml.safe_load(f)
+
+    goals_doc[GOAL_TO_SET] = {'position': [d for d in data.position]}
+
+    with open(path, "w") as f:
+        yaml.dump(goals_doc, f)
+
 
 class SetGoalFrame(tkinter.Frame):
 
@@ -84,6 +95,11 @@ class SetGoalFrame(tkinter.Frame):
         with open(path, "w") as f:
             yaml.dump({}, f)
 
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/joint_states.yaml")
+        with open(path, "w") as f:
+            yaml.dump({}, f)
+
+
     def _quit_button_callback(self):
         self._root.quit()
 
@@ -91,7 +107,7 @@ class SetGoalFrame(tkinter.Frame):
         print("recording")
         eef_callback(rospy.wait_for_message("/j2s7s300_driver/out/tool_pose", PoseStamped), self.goal_name.get())
         pose_callback(rospy.wait_for_message("/j2s7s300_driver/out/cartesian_command", KinovaPose), self.goal_name.get())
-
+        jointstate_callback(rospy.wait_for_message("/j2s7s300_driver/out/joint_state", JointState), self.goal_name.get())
 if __name__ == "__main__":
     print("INIT GOALS")
     
@@ -99,11 +115,12 @@ if __name__ == "__main__":
         rospy.init_node("set_goals", anonymous=True)
 
         direct_controller = direct_control.Direct_Control()
-
+        direct_controller.allow_gripper_control = True
+        direct_controller.close_gripper()
         root = tkinter.Tk()
         recorder = SetGoalFrame(root)
         study_runner.runner.main(root)
-
+        
         rospy.spin()
     except:
         pass
