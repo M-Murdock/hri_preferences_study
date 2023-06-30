@@ -14,10 +14,12 @@ import kinova_msgs.srv
 
 class Autonomous:
     def __init__(self, goal, file=True):
+
         try:
             print("MOVING TO GOAL ", goal)
             moveit_commander.roscpp_initialize(sys.argv)
             self.gripper = armpy.gripper.Gripper()
+            self.arm = armpy.arm.Arm()
             
             if file:
                 path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/joint_states.yaml")
@@ -36,13 +38,11 @@ class Autonomous:
 
     def move(self):
 
-        self.arm = armpy.arm.Arm()
-
-        # target = [0.04140047033144943, 2.4359977101532233, 3.6640649120469884, 1.6956453186978113, 3.3838018284103195, 4.711226244252761, 4.9752046304558135]
-
+        #target = [-5.113821632562219, 3.2215010684137293, 3.2468996357298154, 0.9070291911761929, 4.402456417991775, 4.194839575202506, 5.160864242689597]
+        #self.arm.move_to_joint_pose(target)
         plan = self.arm.plan_joint_pos(self.pos)
-        # print("PLAN", plan)
-        self.arm.move_robot(plan)
+        if plan != None:
+            self.arm.move_robot(plan, True)
 
 
         # rospy.wait_for_service("/j2s7s300_driver/in/add_pose_to_Cartesian_trajectory")
