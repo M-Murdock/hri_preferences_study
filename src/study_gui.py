@@ -15,7 +15,7 @@ import autonomous
 import sys
 import yaml
 from arm_trajectory import Trajectory
-import webcam
+# import webcam
 import kinova_msgs.srv
 from video_recorder import get_video_recorder
 import time
@@ -97,7 +97,7 @@ class HRIStudyRunner(study_runner.StudyRunner):
         stop_arm()
 
     def _start_pos_button_callback(self):
-        self.autonomous = autonomous.Autonomous([0.5415371060371399, 0.041244372725486755, 0.13297860324382782, 1.4718962907791138, 0.9209043979644775, 1.4728060960769653], file=False)
+        self.autonomous = autonomous.Autonomous([-2.9824714416186486, 1.6646011161868666, 2.9489212045219397, 1.8199148067475246, -2.3550685056834593, 4.281245836770126, 10.896048761834706], file=False)
         self.autonomous.open_gripper()
         self.autonomous.move()
 
@@ -209,7 +209,7 @@ def main():
     logging_frame = runner.add_config_frame(SetUserID, "Logging")
     logging_frame.add_logger_frame(RosbagRecorderConfigFrame)
     logging_frame.add_logger("recorder", get_rosbag_recorder)
-    logging_frame.add_logger("video_recorder", get_video_recorder)
+    # logging_frame.add_logger("video_recorder", get_video_recorder)
 
     runner.add_config_frame(ConditionConfigFrame, "Condition")
 

@@ -47,6 +47,7 @@ if __name__=="__main__":
     p = PlanningSceneHelper()
 
     p.remove("table")
+    p.remove("left_wall")
     p.remove("back")
     p.remove("shelves_top")
     p.remove("shelves_middle")
@@ -54,6 +55,7 @@ if __name__=="__main__":
     p.remove("shelves_right_foot")
     p.remove("shelves_left_foot")
 
+    # table_center = -0.662, -0.268, 0.459
     table_z = -0.04
     table_thickness = 0.2
     shelf_thickness = 0.02
@@ -64,13 +66,16 @@ if __name__=="__main__":
     foot_xsize = m(3)
     foot_zsize = m(3)
 
-    table_shelf_top_height=0.618
-    table_shelf_middle_height=0.437
-    table_shelf_bottom_height=0.222
+    table_shelf_top_height= m(27.5)#0.618
+    table_shelf_middle_height= m(18)#0.437
+    table_shelf_bottom_height= m(8.5)#0.222
+    foot_width = m(0.5)
+    foot_height = m(29)
 
-    table_center_coord = -0.461
+    table_center_x = -0.662
+    table_center_y = -0.38
 
-    table_height = 0.7
+    # table_height = 0.7
 
     table_width = m(10)
     table_length = m(27)
@@ -78,15 +83,16 @@ if __name__=="__main__":
     top_bar_thickness = 0.3
     bar_pos = m(-22)
 
-    safety_buffer = 0.04
+    safety_buffer = 0.04 
 
-    p.add_box("back", "world", size=(2, 0.1, 2), position=(0, 0.35, 0), color=(0,0,1.,0.4))
-    p.add_box("table", "world", size=(2, 2, table_thickness), position=(0, 0, table_z - table_thickness/2), color=(0,0,1.,0.4))
+    p.add_box("back", "world", size=(5, 0.3, 2), position=(0, 0.35, 0), color=(0,0,1.,0.4))
+    p.add_box("left_wall", "world", size=(0.5, 2, 2), position=(0.35, 0, 0), color=(0,0,1.,0.4))
+    p.add_box("table", "world", size=(5, 2, table_thickness), position=(0, 0, table_z - table_thickness/2), color=(0,0,1.,0.4))
 
-    p.add_box("shelves_top", "world", size=(table_length, table_width, shelf_thickness), position=(0.493, table_center_coord, table_shelf_top_height), color=(0.5,0,1.,0.4))
-    p.add_box("shelves_middle", "world", size=(table_length, table_width, shelf_thickness), position=(0.493, table_center_coord, table_shelf_middle_height), color=(0.5,0,1.,0.4))
-    p.add_box("shelves_bottom", "world", size=(table_length, table_width, shelf_thickness), position=(0.493, table_center_coord, table_shelf_bottom_height), color=(0.5,0,1.,0.4))
+    p.add_box("shelves_top", "world", size=(table_length, table_width, shelf_thickness), position=(table_center_x, table_center_y, table_shelf_top_height), color=(0.5,0,1.,0.4))
+    p.add_box("shelves_middle", "world", size=(table_length, table_width, shelf_thickness), position=(table_center_x, table_center_y, table_shelf_middle_height), color=(0.5,0,1.,0.4))
+    p.add_box("shelves_bottom", "world", size=(table_length, table_width, shelf_thickness), position=(table_center_x, table_center_y, table_shelf_bottom_height), color=(0.5,0,1.,0.4))
 
-    p.add_box("shelves_right_foot", "world", size=(0.02, table_width, table_height), position=(0.154, table_center_coord, 0.385), color=(0.5,0,1.,0.4))
-    p.add_box("shelves_left_foot", "world", size=(0.02, table_width, table_height), position=(0.154+table_length, table_center_coord, 0.385), color=(0.5,0,1.,0.4))
+    p.add_box("shelves_right_foot", "world", size=(foot_width, table_width, foot_height), position=(table_center_x+(table_length/2), table_center_y, 0.385), color=(0.5,0,1.,0.4))
+    p.add_box("shelves_left_foot", "world", size=(foot_width, table_width, foot_height), position=(table_center_x-(table_length/2), table_center_y, 0.385), color=(0.5,0,1.,0.4))
    
