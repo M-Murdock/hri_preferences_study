@@ -66,19 +66,19 @@ if __name__=="__main__":
     foot_xsize = m(3)
     foot_zsize = m(3)
 
-    table_shelf_top_height= m(27.5)#0.618
-    table_shelf_middle_height= m(18)#0.437
-    table_shelf_bottom_height= m(8.5)#0.222
+    table_shelf_top_height= m(26)#0.618
+    table_shelf_middle_height= m(16.5)#0.437
+    table_shelf_bottom_height= m(7)#0.222
     foot_width = m(0.5)
-    foot_height = m(29)
+    foot_height = m(25)
 
-    table_center_x = -0.662
-    table_center_y = -0.38
+    table_center_x = -0.569
+    table_center_y = -0.50
 
     # table_height = 0.7
 
     table_width = m(10)
-    table_length = m(27)
+    table_length = m(25)
     # make it much taller than strictly necessary just so we never pass in front of and above the crossbar
     top_bar_thickness = 0.3
     bar_pos = m(-22)
