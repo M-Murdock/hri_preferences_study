@@ -26,6 +26,7 @@ class Autonomous:
                 with open(path, 'r') as file:
                     self.goal = yaml.safe_load(file)[goal]
                 self.pos = self.goal['position'][0:7]
+                print("position loaded")
             else:
                 self.pos = goal
 

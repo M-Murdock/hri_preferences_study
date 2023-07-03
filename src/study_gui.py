@@ -181,14 +181,16 @@ async def run_autonomy_level(config, status_cb):
     with RunLogging(config):
         if config["Condition"] == "Autonomous":
             autonomous_controller = autonomous.Autonomous(config["Goal_Name"])
-            # autonomous_controller.close_gripper()
+            autonomous_controller.close_gripper()
             time.sleep(2)
             autonomous_controller.move()
-            # autonomous_controller.open_gripper()
+            autonomous_controller.open_gripper()
         if config["Condition"] == "Shared":
             shared_controller = shared_control.Shared_Control()
             shared_controller.close_gripper()
             shared_controller.run_shared_control()
+            time.sleep(2)
+            shared_controller.open_gripper()
         if config["Condition"] == "Teleop":
             direct_controller = direct_control.Direct_Control()
             direct_controller.close_gripper()

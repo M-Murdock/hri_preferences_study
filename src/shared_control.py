@@ -122,7 +122,7 @@ class Shared_Control:
 
                 print(f"{state} -> {u_h} -> {best_actions} -> {q_all} -> {prob} -> {action_space[u_r_index]}") # For debugging
                 u_r = np.array(action_space[u_r_index]) # Get robot's predicted action
-
+                
                 # Merge the two actions
                 merged_action = (u_h + u_r) / 2
 
@@ -132,10 +132,18 @@ class Shared_Control:
                 merged_action_twist.linear.y = merged_action[1]
                 merged_action_twist.linear.z = merged_action[2]
 
-
-                # Perform resulting action
-                self.arm.set_velocity(merged_action_twist)
+                # ------------------------------------------------   
+                # NOTE: this section is study-specific to help avoid the arm ramming into the shelf and getting stuck
+                # to generalize, you can replace the if/else with the line `self.arm.set_velocity(merged_action_twist)`
                 
+                if u_h[1] == 1: 
+                    self.arm.set_velocity(self.cmd)
+                else:
+                    # Perform resulting action
+                    self.arm.set_velocity(merged_action_twist)
+                # ------------------------------------------------   
+
+
                 # if we're very close to a goal, stop.
                 i = 0
                 pred_goal = None
@@ -154,12 +162,12 @@ class Shared_Control:
             zero.linear.z = 0
             self.arm.set_velocity(zero)
 
-            rospy.sleep(0.2)
+            rospy.sleep(0.3)
 
             # once we've predicted the goal, move to the goal position
             auton_arm = autonomous.Autonomous(pred_goal)
 
-            rospy.sleep(0.3)
+            # rospy.sleep(0.3)
 
 
         except:
