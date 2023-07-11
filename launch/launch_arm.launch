@@ -8,4 +8,10 @@
     <!-- Collect Data -->
     <node pkg="joy" name="joy_node" type="joy_node" />
 
+    <node
+        name="collision_scene"
+        pkg="hri_preferences_study"
+        type="setup_tablebot_collision_scene.py"
+    />
+
 </launch>

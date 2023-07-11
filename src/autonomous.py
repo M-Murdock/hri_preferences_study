@@ -20,6 +20,7 @@ class Autonomous:
             moveit_commander.roscpp_initialize(sys.argv)
             self.gripper = armpy.gripper.Gripper()
             self.arm = armpy.arm.Arm()
+            self.arm.set_velocity(0.3)
             
             if file:
                 path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/joint_states.yaml")
