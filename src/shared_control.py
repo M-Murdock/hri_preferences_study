@@ -53,7 +53,7 @@ class Shared_Control:
         with open(path, 'r') as f:
             self.cfg = yaml.safe_load(f)
 
-        self.cmd = None
+        self.direct_cmd = None
 
         self.mode = teleop_lib.input_profile.build_profile(self.cfg)
         rospy.Subscriber("/joy", Joy, self.callback)
@@ -77,7 +77,7 @@ class Shared_Control:
         return actions
 
     def callback(self, data):
-        self.cmd = self.mode.process_input(data).twist
+        self.direct_cmd = self.mode.process_input(data).twist
 
     def run_shared_control(self):
 
@@ -90,8 +90,30 @@ class Shared_Control:
                 # wait for user's command
                 position = rospy.wait_for_message('/j2s7s300_driver/out/tool_pose', PoseStamped) # wait for robot's position
                 
-                if self.cmd == None:
+                if self.direct_cmd == None:
                     continue
+                #-------------
+                self.cmd = Twist()
+                self.cmd.linear.x = self.direct_cmd.linear.x
+                self.cmd.linear.y = self.direct_cmd.linear.y
+                self.cmd.linear.z = self.direct_cmd.linear.z
+
+                # print(self.pose)
+
+                # If arm is too close to participant
+                if position.pose.position.y > 0.02:
+                    if self.direct_cmd.linear.y > 0:
+                        # print("y is too low")
+                        self.cmd.linear.y = 0
+                # if arm is going to hit table
+                if position.pose.position.z < 0.01:
+                    if self.direct_cmd.linear.z < 0:
+                        # print("z is too low")
+                        self.cmd.linear.z = 0
+
+                #-------------
+
+                
                 # Store user action, state as numpy arrays
                 user_action = [self.cmd.linear.x, self.cmd.linear.y, self.cmd.linear.z]
                 state = [position.pose.position.x, position.pose.position.y, position.pose.position.z]

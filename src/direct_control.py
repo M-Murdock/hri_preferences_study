@@ -51,14 +51,14 @@ class Direct_Control:
         print(self.pose)
 
         # If arm is too close to participant
-        if self.pose.pose.position.y > 0.04:
+        if self.pose.pose.position.y > 0.02:
             if command.linear.y > 0:
-                print("y is too low")
+                # print("y is too low")
                 new_cmd.linear.y = 0
         # if arm is going to hit table
-        if self.pose.pose.position.z < -0.005:
+        if self.pose.pose.position.z < 0.01:
             if command.linear.z < 0:
-                print("z is too low")
+                # print("z is too low")
                 new_cmd.linear.z = 0
 
         self.arm.set_velocity(new_cmd)
