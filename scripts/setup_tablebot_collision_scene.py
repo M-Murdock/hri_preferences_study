@@ -66,8 +66,10 @@ if __name__=="__main__":
     foot_xsize = m(3)
     foot_zsize = m(3)
 
-    board_offset = m(5/8) # height of the boards beneath the standalone arm
-    back_offset = m(5.1) # how far backwards the arm has moved from its original position
+    # board_offset = m(5/8) # height of the boards beneath the standalone arm
+    # back_offset = m(5.1) # how far backwards the arm has moved from its original position
+    board_offset = 0
+    back_offset = m(3.6)
 
     table_shelf_top_height= m(26)-0.02
     table_shelf_middle_height= m(16.5)
