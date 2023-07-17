@@ -90,7 +90,7 @@ if __name__=="__main__":
 
     p.add_box("back", "base_link", size=(0.3, 5, 2), position=(-0.35, 0, 0-board_offset+robot_height), color=(0,0,1.,0.4))
     p.add_box("left_wall", "base_link", size=(2, 0.3, 2), position=(0, 0.45, 0-board_offset+robot_height), color=(0,0,1.,0.4))
-    p.add_box("table", "base_link", size=(2, 5, table_thickness + board_offset), position=(0, 0, table_z - (table_thickness/2) -board_offset+robot_height), color=(0,0,1.,0.4))
+    p.add_box("table", "base_link", size=(2, 5, table_thickness + board_offset), position=(0, 0, table_z - (table_thickness/2) -board_offset+robot_height-0.05), color=(0,0,1.,0.4))
 
     p.add_box("shelves_top", "base_link", size=(table_width+safety_buffer, table_length+safety_buffer, shelf_thickness+safety_buffer), position=(-(table_center_y-back_offset), table_center_x, table_shelf_top_height-board_offset+robot_height), color=(0.5,0,1.,0.4))
     p.add_box("shelves_middle", "base_link", size=(table_width+safety_buffer, table_length+safety_buffer, shelf_thickness+safety_buffer), position=(-(table_center_y-back_offset), table_center_x, table_shelf_middle_height-board_offset+robot_height), color=(0.5,0,1.,0.4))
