@@ -55,7 +55,8 @@ if __name__=="__main__":
     p.remove("shelves_right_foot")
     p.remove("shelves_left_foot")
 
-    
+    robot_height = m(27.5)
+
     table_z = -0.04
     table_thickness = 0.2
     shelf_thickness = 0.01
@@ -71,13 +72,12 @@ if __name__=="__main__":
 
     table_shelf_top_height= m(26)-0.02
     table_shelf_middle_height= m(16.5)
-    table_shelf_bottom_height= m(7)-0.02
+    table_shelf_bottom_height= m(7)+0.008
     foot_width = m(0.5)
     foot_height = m(25)
 
-    table_center_x = -0.569
-    table_center_y = -0.50
-
+    table_center_x = -0.73
+    table_center_y = -0.7
     # table_height = 0.7
 
     table_width = m(11)
@@ -88,14 +88,14 @@ if __name__=="__main__":
 
     safety_buffer = 0.04 
 
-    p.add_box("back", "base_link", size=(5, 0.3, 2), position=(0, 0.35, 0-board_offset), color=(0,0,1.,0.4))
-    p.add_box("left_wall", "base_link", size=(0.3, 2, 2), position=(0.45, 0, 0-board_offset), color=(0,0,1.,0.4))
-    p.add_box("table", "base_link", size=(5, 2, table_thickness + board_offset), position=(0, 0, table_z - (table_thickness/2) -board_offset), color=(0,0,1.,0.4))
+    p.add_box("back", "base_link", size=(0.3, 5, 2), position=(-0.35, 0, 0-board_offset+robot_height), color=(0,0,1.,0.4))
+    p.add_box("left_wall", "base_link", size=(2, 0.3, 2), position=(0, 0.45, 0-board_offset+robot_height), color=(0,0,1.,0.4))
+    p.add_box("table", "base_link", size=(2, 5, table_thickness + board_offset), position=(0, 0, table_z - (table_thickness/2) -board_offset+robot_height), color=(0,0,1.,0.4))
 
-    p.add_box("shelves_top", "base_link", size=(table_length+safety_buffer, table_width+safety_buffer, shelf_thickness+safety_buffer), position=(table_center_x, table_center_y-back_offset, table_shelf_top_height-board_offset), color=(0.5,0,1.,0.4))
-    p.add_box("shelves_middle", "base_link", size=(table_length+safety_buffer, table_width+safety_buffer, shelf_thickness+safety_buffer), position=(table_center_x, table_center_y-back_offset, table_shelf_middle_height-board_offset), color=(0.5,0,1.,0.4))
-    p.add_box("shelves_bottom", "base_link", size=(table_length+safety_buffer, table_width+safety_buffer, shelf_thickness+safety_buffer), position=(table_center_x, table_center_y-back_offset, table_shelf_bottom_height-board_offset), color=(0.5,0,1.,0.4))
+    p.add_box("shelves_top", "base_link", size=(table_width+safety_buffer, table_length+safety_buffer, shelf_thickness+safety_buffer), position=(-(table_center_y-back_offset), table_center_x, table_shelf_top_height-board_offset+robot_height), color=(0.5,0,1.,0.4))
+    p.add_box("shelves_middle", "base_link", size=(table_width+safety_buffer, table_length+safety_buffer, shelf_thickness+safety_buffer), position=(-(table_center_y-back_offset), table_center_x, table_shelf_middle_height-board_offset+robot_height), color=(0.5,0,1.,0.4))
+    p.add_box("shelves_bottom", "base_link", size=(table_width+safety_buffer, table_length+safety_buffer, shelf_thickness+safety_buffer), position=(-(table_center_y-back_offset), table_center_x, table_shelf_bottom_height-board_offset+robot_height), color=(0.5,0,1.,0.4))
 
-    p.add_box("shelves_right_foot", "base_link", size=(foot_width+safety_buffer, table_width+safety_buffer, foot_height+safety_buffer), position=(table_center_x+(table_length/2), table_center_y-back_offset, 0.385-board_offset), color=(0.5,0,1.,0.4))
-    p.add_box("shelves_left_foot", "base_link", size=(foot_width+safety_buffer, table_width+safety_buffer, foot_height+safety_buffer), position=(table_center_x-(table_length/2), table_center_y-back_offset, 0.385-board_offset), color=(0.5,0,1.,0.4))
+    p.add_box("shelves_right_foot", "base_link", size=(table_width+safety_buffer, foot_width+safety_buffer, foot_height+safety_buffer+0.1), position=(-(table_center_y-back_offset), table_center_x+(table_length/2), 0.385-board_offset+robot_height), color=(0.5,0,1.,0.4))
+    p.add_box("shelves_left_foot", "base_link", size=(table_width+safety_buffer, foot_width+safety_buffer, foot_height+safety_buffer+0.1), position=(-(table_center_y-back_offset), table_center_x-(table_length/2), 0.385-board_offset+robot_height), color=(0.5,0,1.,0.4))
    
