@@ -5,6 +5,7 @@
     <include file="$(find poli2_launch)/launch/machine1.launch">
         <arg name="start_manipulation" value="true"/>
         <arg name="robot_name" value="beep"/>
+        <arg name="start_rviz" value="true"/>
     </include>
 
     <!-- Collect Data -->
