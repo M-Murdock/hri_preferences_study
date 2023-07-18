@@ -78,7 +78,6 @@ if __name__=="__main__":
 
     table_center_x = -0.73
     table_center_y = -0.7
-    # table_height = 0.7
 
     table_width = m(11)
     table_length = m(25)
