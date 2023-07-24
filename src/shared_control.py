@@ -60,6 +60,7 @@ class Shared_Control:
 
 
     def open_gripper(self):
+        self.arm.stop()
         self.gripper.open()
 
     def close_gripper(self):

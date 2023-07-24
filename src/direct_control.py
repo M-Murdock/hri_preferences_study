@@ -39,7 +39,9 @@ class Direct_Control:
     def callback(self, data):
         if self.allow_gripper_control:
             if data.buttons[4] == 1 and data.buttons[5] == 1: 
+                self.arm.stop()
                 self.open_gripper() 
+                
 
 
         command = self.mode.process_input(data).twist
@@ -48,7 +50,7 @@ class Direct_Control:
         new_cmd.linear.y = command.linear.y
         new_cmd.linear.z = command.linear.z
 
-        print(self.pose)
+        # print(self.pose)
 
         # If arm is too close to participant
         if self.pose.pose.position.y > 0.02:
