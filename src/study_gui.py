@@ -15,7 +15,6 @@ import autonomous
 import sys
 import yaml
 from arm_trajectory import Trajectory
-# import webcam
 import kinova_msgs.srv
 from video_recorder import get_video_recorder
 import time

@@ -9,13 +9,17 @@ from threading import Thread
 
 
 class Webcam:
-    def __init__(self, user_id):
-        self.user_id = user_id
+    def __init__(self):
+        self.user_id = 0
         self.running = False
 
     def start(self):
         Thread(target=self.get, args=()).start()
+        # self.get()
         return self 
+
+    def set_id(self, user_id):
+        self.user_id = user_id 
 
     def get(self):
         self.running = True

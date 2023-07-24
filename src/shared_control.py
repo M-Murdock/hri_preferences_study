@@ -58,7 +58,6 @@ class Shared_Control:
         self.mode = teleop_lib.input_profile.build_profile(self.cfg)
         rospy.Subscriber("/joy", Joy, self.callback)
 
-        # self.run_shared_control()
 
     def open_gripper(self):
         self.gripper.open()
@@ -92,23 +91,22 @@ class Shared_Control:
                 
                 if self.direct_cmd == None:
                     continue
+
                 #-------------
+                # NOTE: This is a study-specific section, designed to keep the arm from running into the user or table
                 self.cmd = Twist()
                 self.cmd.linear.x = self.direct_cmd.linear.x
                 self.cmd.linear.y = self.direct_cmd.linear.y
                 self.cmd.linear.z = self.direct_cmd.linear.z
 
-                # print(self.pose)
 
                 # If arm is too close to participant
                 if position.pose.position.y > 0.02:
                     if self.direct_cmd.linear.y > 0:
-                        # print("y is too low")
                         self.cmd.linear.y = 0
                 # if arm is going to hit table
                 if position.pose.position.z < 0.01:
                     if self.direct_cmd.linear.z < 0:
-                        # print("z is too low")
                         self.cmd.linear.z = 0
 
                 #-------------
