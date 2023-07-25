@@ -60,7 +60,6 @@ class Shared_Control:
 
 
     def open_gripper(self):
-        self.arm.stop()
         self.gripper.open()
 
     def close_gripper(self):
@@ -181,12 +180,16 @@ class Shared_Control:
             zero.linear.x = 0
             zero.linear.y = 0
             zero.linear.z = 0
-            self.arm.set_velocity(zero)
+            # self.arm.set_velocity(zero)
 
-            rospy.sleep(0.3)
+            # rospy.sleep(0.3)
 
-            # once we've predicted the goal, move to the goal position
-            auton_arm = autonomous.Autonomous(pred_goal)
+            # If we're within a threshold of the goal, stop the arm and drop the cup
+            self.arm.stop()
+            self.open_gripper()
+
+            # # once we've predicted the goal, move to the goal position
+            # auton_arm = autonomous.Autonomous(pred_goal)
 
             # rospy.sleep(0.3)
 

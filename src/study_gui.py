@@ -16,7 +16,6 @@ import sys
 import yaml
 from arm_trajectory import Trajectory
 import kinova_msgs.srv
-from video_recorder import get_video_recorder
 import time
 
 # 
@@ -210,7 +209,6 @@ def main():
     logging_frame = runner.add_config_frame(SetUserID, "Logging")
     logging_frame.add_logger_frame(RosbagRecorderConfigFrame)
     logging_frame.add_logger("recorder", get_rosbag_recorder)
-    # logging_frame.add_logger("video_recorder", get_video_recorder)
 
     runner.add_config_frame(ConditionConfigFrame, "Condition")
 

@@ -31,16 +31,16 @@ class Direct_Control:
         self.pose = PoseStamped()
         self.arm = armpy.gen2_teleop.Gen2Teleop(ns="/j2s7s300_driver")
 
-        self.allow_gripper_control = False
+        # self.allow_gripper_control = False
 
     def check_pose(self, data):
         self.pose = data 
 
     def callback(self, data):
-        if self.allow_gripper_control:
-            if data.buttons[4] == 1 and data.buttons[5] == 1: 
-                self.arm.stop()
-                self.open_gripper() 
+        # if self.allow_gripper_control:
+        if data.buttons[4] == 1 and data.buttons[5] == 1: 
+            self.arm.stop()
+            self.open_gripper() 
                 
 
 

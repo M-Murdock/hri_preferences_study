@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
 <launch>
 
-    <!-- Start webcam recording -->
-    <node pkg="hri_preferences_study" name="webcam" type="webcam.py" output="screen"></node>
     <include file="$(find hri_preferences_study)/launch/launch_arm.launch">
     </include>
     <!-- <include file="$(find hri_preferences_study)/launch/launch_robot.launch">
