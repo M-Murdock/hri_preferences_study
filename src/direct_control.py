@@ -53,7 +53,7 @@ class Direct_Control:
             if command.linear.y > 0:
                 new_cmd.linear.y = 0
         # if arm is going to hit table
-        if self.pose.pose.position.z < 0.01:
+        if self.pose.pose.position.z < 0.03:
             if command.linear.z < 0:
                 new_cmd.linear.z = 0
 

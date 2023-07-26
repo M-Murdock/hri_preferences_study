@@ -105,7 +105,7 @@ class Shared_Control:
                     if self.direct_cmd.linear.y > 0:
                         self.cmd.linear.y = 0
                 # if arm is going to hit table
-                if position.pose.position.z < 0.01:
+                if position.pose.position.z < 0.03:
                     if self.direct_cmd.linear.z < 0:
                         self.cmd.linear.z = 0
 

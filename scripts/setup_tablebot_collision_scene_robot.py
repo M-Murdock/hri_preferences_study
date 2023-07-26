@@ -75,7 +75,7 @@ if __name__=="__main__":
 
     safety_buffer = 0.04 
 
-    p.add_box("back", "base_link", size=(0.3, 5, 2), position=(-0.35, 0, 0+robot_height), color=(0,0,1.,0.4))
+    p.add_box("back", "base_link", size=(0.3, 5, 2), position=(-0.1, 0, 0+robot_height), color=(0,0,1.,0.4))
     p.add_box("left_wall", "base_link", size=(2, 0.3, 2), position=(0, 0.45, 0+robot_height), color=(0,0,1.,0.4))
     p.add_box("table", "base_link", size=(2, 5, table_thickness), position=(0, 0, table_z - (table_thickness/2)+robot_height-0.05), color=(0,0,1.,0.4))
 
