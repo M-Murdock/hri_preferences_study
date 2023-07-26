@@ -57,7 +57,7 @@ if __name__=="__main__":
 
     robot_height = 0.63262
 
-    table_z = -0.04
+    table_z = 0.01#-0.04
     table_thickness = 0.2
     shelf_thickness = 0.01
 
@@ -67,8 +67,8 @@ if __name__=="__main__":
     foot_width = m(0.5)
     foot_height = m(25)
 
-    shelf_center_y = -0.73
-    shelf_center_x = -0.66 - m(5.1)
+    shelf_center_y = -0.55#-0.73
+    shelf_center_x = -0.75 - m(5.1)#-0.66 - m(5.1)
 
     table_width = m(11)
     table_length = m(25)
