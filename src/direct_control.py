@@ -49,7 +49,7 @@ class Direct_Control:
 
 
         # If arm is too close to participant
-        if self.pose.pose.position.y > 0.02:
+        if self.pose.pose.position.y > -0.3:
             if command.linear.y > 0:
                 new_cmd.linear.y = 0
         # if arm is going to hit table

@@ -101,7 +101,7 @@ class Shared_Control:
 
 
                 # If arm is too close to participant
-                if position.pose.position.y > 0.02:
+                if position.pose.position.y > -0.3:
                     if self.direct_cmd.linear.y > 0:
                         self.cmd.linear.y = 0
                 # if arm is going to hit table
