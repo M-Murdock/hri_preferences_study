@@ -66,8 +66,8 @@ if __name__=="__main__":
     foot_width = m(0.5)
     foot_height = m(25)
 
-    shelf_center_x = -0.569
-    shelf_center_y = -0.59144
+    shelf_center_x = -0.28
+    shelf_center_y = -0.68
 
     table_width = m(11) 
     table_length = m(25)

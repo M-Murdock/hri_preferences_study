@@ -31,13 +31,10 @@ class Direct_Control:
         self.pose = PoseStamped()
         self.arm = armpy.gen2_teleop.Gen2Teleop(ns="/j2s7s300_driver")
 
-        # self.allow_gripper_control = False
-
     def check_pose(self, data):
         self.pose = data 
 
     def callback(self, data):
-        # if self.allow_gripper_control:
         if data.buttons[4] == 1 and data.buttons[5] == 1: 
             self.arm.stop()
             self.open_gripper() 
@@ -50,17 +47,14 @@ class Direct_Control:
         new_cmd.linear.y = command.linear.y
         new_cmd.linear.z = command.linear.z
 
-        # print(self.pose)
 
         # If arm is too close to participant
         if self.pose.pose.position.y > 0.02:
             if command.linear.y > 0:
-                # print("y is too low")
                 new_cmd.linear.y = 0
         # if arm is going to hit table
         if self.pose.pose.position.z < 0.01:
             if command.linear.z < 0:
-                # print("z is too low")
                 new_cmd.linear.z = 0
 
         self.arm.set_velocity(new_cmd)

@@ -95,7 +95,7 @@ class HRIStudyRunner(study_runner.StudyRunner):
         stop_arm()
 
     def _start_pos_button_callback(self):
-        self.autonomous = autonomous.Autonomous([3.1311546600133364, 1.5762506138654333, 2.9404145353680082, 2.0501635919544507, 4.031522020301724, 4.184568295510289, 1.1745122307947622], file=False)
+        self.autonomous = autonomous.Autonomous([3.1573585672430626, 1.669121033188949, 2.927425233467256, 1.3752290895157453, 4.042685725275227, 4.556754378912677, 7.900009047094323], file=False)
         self.autonomous.open_gripper()
         self.autonomous.move()
 
