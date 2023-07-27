@@ -76,6 +76,9 @@ class Shared_Control:
         return actions
 
     def callback(self, data):
+        if data.buttons[4] == 1 and data.buttons[5] == 1: 
+            self.arm.stop()
+            self.open_gripper() 
         self.direct_cmd = self.mode.process_input(data).twist
 
     def run_shared_control(self):
