@@ -144,7 +144,13 @@ class Shared_Control:
                 u_r = np.array(action_space[u_r_index]) # Get robot's predicted action
                 
                 # Merge the two actions
-                merged_action = (u_h + u_r) / 2
+                #-------------
+                # If arm is about to reach the shelves, then ignore the shared auton algorithm
+                if position.pose.position.y < -0.45:
+                    merged_action = u_h
+                #-------------
+                else: 
+                    merged_action = (u_h + u_r) / 2
 
                 # Convert the action vector to a Twist message
                 merged_action_twist = Twist()
