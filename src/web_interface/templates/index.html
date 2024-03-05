@@ -1,0 +1,182 @@
+<!-- Adapted from: http://wiki.ros.org/roslibjs/Tutorials/BasicRosFunctionality -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/eventemitter2@6.4.9/lib/eventemitter2.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.min.js"></script>
+
+<style>
+  .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      grid-gap: 5px;
+      margin: 20px auto;
+      max-width: 200px;
+  }
+  .invisible {
+      padding: 10px;
+      font-size: 20px;
+      visibility: hidden;
+  }
+  .key {
+      padding: 10px;
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      text-align: center;
+      font-size: 20px;
+      cursor: pointer;
+  }
+  .key:hover {
+      background-color: #ccc;
+  }
+</style>
+
+</head>
+<body>
+<!-- ------------------------------------------------------------->
+<div class="keypad">
+  <div class="invisible"></div>
+  <div class="key" id="up">&#8593;</div>
+  <div class="invisible"></div>
+  <div class="key" id="left">&#8592;</div>
+  <div class="invisible"></div>
+  <div class="key" id="right">&#8594;</div>
+  <div class="invisible"></div>
+  <div class="key" id="down">&#8595;</div>
+  <div class="invisible"></div>
+  <div class="key" id="z-plus">Up</div>
+  <div class="invisible"></div>
+  <div class="key" id="z-minus">Down</div>
+</div>
+
+<div class="key" id="open">Open Gripper</div>
+<!-- ------------------------------------------------------------->
+
+<script>
+  // ----------------------------------------------------------------
+  // Connecting to ROS
+  var ros = new ROSLIB.Ros({
+    url : 'ws://localhost:9090'
+  });
+
+  ros.on('connection', function() {
+    console.log('Connected to websocket server.');
+  });
+
+  ros.on('error', function(error) {
+    console.log('Error connecting to websocket server: ', error);
+  });
+
+  ros.on('close', function() {
+    console.log('Connection to websocket server closed.');
+  });
+  
+  // ----------------------------------------------------------------
+
+  // ----------------------------------------------------------------
+  // Function to send ROS message
+
+  var publishInterval;
+  // Publish the joy message
+  var joyTopic = new ROSLIB.Topic({
+    ros: ros,
+    name: '/joy',
+    messageType: 'sensor_msgs/Joy'
+  });
+
+  function startPublishing(direction) {
+  
+      var joyMsg = new ROSLIB.Message({
+        axes: [0.0, 0.0, 0.0], // Initialize axes
+        buttons: [0, 0] // Initialize buttons
+      });
+
+      // Set appropriate axis value based on direction
+      switch (direction) {
+        case 'up':
+          joyMsg.axes[1] = 1.0; // Forward
+          break;
+        case 'down':
+          joyMsg.axes[1] = -1.0; // Backward
+          break;
+        case 'left':
+          joyMsg.axes[0] = -1.0; // Left
+          break;
+        case 'right':
+          joyMsg.axes[0] = 1.0; // Right
+          break;
+        case 'z-plus':
+          joyMsg.axes[2] = 1.0; // Up
+          break;
+        case 'z-minus':
+          joyMsg.axes[2] = -1.0; // Down
+          break;
+        case 'open':
+          joyMsg.buttons[0] = 1; // open gripper button
+          break;
+        default:
+          break;
+      }
+
+      
+
+      joyTopic.publish(joyMsg);
+      console.log(joyMsg);
+
+  }
+
+  function stopPublishing() {
+    // Publish the joy message
+    var joyMsg = new ROSLIB.Message({
+      axes: [0.0, 0.0, 0.0], // Initialize axes
+      buttons: [0, 0] // Initialize buttons
+    });
+    joyTopic.publish(joyMsg);
+  }
+
+
+  // ----------------------------------------------------------------
+  document.getElementById('up').addEventListener('mousedown', function() {
+    startPublishing('up');
+  });
+
+  document.getElementById('down').addEventListener('mousedown', function() {
+    startPublishing('down');
+  });
+
+  document.getElementById('left').addEventListener('mousedown', function() {
+    startPublishing('left');
+  });
+
+  document.getElementById('right').addEventListener('mousedown', function() {
+    startPublishing('right');
+  });
+
+  document.getElementById('z-plus').addEventListener('mousedown', function() {
+    startPublishing('z-plus');
+  });
+
+  document.getElementById('z-minus').addEventListener('mousedown', function() {
+    startPublishing('z-minus');
+  });
+
+  document.getElementById('open').addEventListener('mousedown', function() {
+    startPublishing('open');
+  });
+
+  // ---------------------
+  // ---------------------
+
+  window.addEventListener('mouseup', function() {
+    stopPublishing();
+  });
+  // ----------------------------------------------------------------
+
+  
+</script>
+
+</body>
+</html>

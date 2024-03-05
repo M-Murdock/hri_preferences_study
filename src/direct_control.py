@@ -16,7 +16,9 @@ import armpy.gripper
 
 class Direct_Control:
     def __init__(self):
-        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/XYZMode.yaml")
+        # path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/XYZMode.yaml")
+        # path = os.path.join(os.path.dirname(os.path.abspath(__file__)),"src/web_interface/WebXYZMode.yaml")
+        path = "/home/mavis/catkin_ws/src/hri_preferences_study/src/web_interface/WebXYZMode.yaml"
         with open(path, 'r') as file:
             self.cfg = yaml.safe_load(file)
 
@@ -35,9 +37,10 @@ class Direct_Control:
         self.pose = data 
 
     def callback(self, data):
-        if data.buttons[4] == 1 and data.buttons[5] == 1: 
-            self.arm.stop()
-            self.open_gripper() 
+        print("received joy message")
+        # if data.buttons[4] == 1 and data.buttons[5] == 1: 
+        #     self.arm.stop()
+        #     self.open_gripper() 
                 
 
 

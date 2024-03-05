@@ -6,7 +6,7 @@
     </include>
 
     <!-- Collect Data -->
-    <node pkg="joy" name="joy_node" type="joy_node" />
+    <!-- <node pkg="joy" name="joy_node" type="joy_node" /> -->
 
     <node
         name="collision_scene"
