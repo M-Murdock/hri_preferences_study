@@ -42,15 +42,20 @@ class Shared_Control:
             self.output = yaml.safe_load(f)
             self.goals_xyz = []
             self.goal_names = []
-
             # save the x/y/z coordinates of each goal
             for goal in self.output:
                 self.goal_names.append(goal)
                 self.goals_xyz.append((self.output.get(goal).get('position')['x'], self.output.get(goal).get('position')['y'], self.output.get(goal).get('position')['z']))
 
         # get the controller mapping
+        self.CONTROLLER = "web"
+
+        if self.CONTROLLER == "web":
+            path = "/home/mavis/catkin_ws/src/robot_web_interface_controller/config/WebXYZMode.yaml"
+        else:
+            path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/XYZMode.yaml")
         # path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/XYZMode.yaml")
-        path = "/home/mavis/catkin_ws/src/hri_preferences_study/src/web_interface/WebXYZMode.yaml"
+        # path = "/home/mavis/catkin_ws/src/hri_preferences_study/src/web_interface/WebXYZMode.yaml"
         with open(path, 'r') as f:
             self.cfg = yaml.safe_load(f)
 
@@ -77,9 +82,14 @@ class Shared_Control:
         return actions
 
     def callback(self, data):
-        # if data.buttons[4] == 1 and data.buttons[5] == 1: 
-        #     self.arm.stop()
-        #     self.open_gripper() 
+        if self.CONTROLLER == "web":
+            if data.buttons[0] == 1: 
+                self.arm.stop()
+                self.open_gripper() 
+        else: 
+            if data.buttons[4] == 1 and data.buttons[5] == 1: 
+                self.arm.stop()
+                self.open_gripper() 
         self.direct_cmd = self.mode.process_input(data).twist
 
     def run_shared_control(self):

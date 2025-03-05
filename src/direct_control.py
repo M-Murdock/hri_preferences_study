@@ -16,9 +16,14 @@ import armpy.gripper
 
 class Direct_Control:
     def __init__(self):
-        # path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/XYZMode.yaml")
+        self.CONTROLLER = "web"
+
+        if self.CONTROLLER == "web":
+            path = "/home/mavis/catkin_ws/src/robot_web_interface_controller/config/WebXYZMode.yaml"
+        else:
+            path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/XYZMode.yaml")
         # path = os.path.join(os.path.dirname(os.path.abspath(__file__)),"src/web_interface/WebXYZMode.yaml")
-        path = "/home/mavis/catkin_ws/src/hri_preferences_study/src/web_interface/WebXYZMode.yaml"
+        
         with open(path, 'r') as file:
             self.cfg = yaml.safe_load(file)
 
@@ -38,10 +43,16 @@ class Direct_Control:
 
     def callback(self, data):
         print("received joy message")
-        # if data.buttons[4] == 1 and data.buttons[5] == 1: 
-        #     self.arm.stop()
-        #     self.open_gripper() 
-                
+        print(data.axes)
+ 
+        if self.CONTROLLER == "web":
+            if data.buttons[0] == 1: 
+                self.arm.stop()
+                self.open_gripper() 
+        else: 
+            if data.buttons[4] == 1 and data.buttons[5] == 1: 
+                self.arm.stop()
+                self.open_gripper() 
 
 
         command = self.mode.process_input(data).twist

@@ -1,10 +1,18 @@
 <?xml version="1.0"?>
 <launch>
+    <arg name="controller" default="web"/>
+    <arg name="embodiment" default="robot"/>
 
-    <include file="$(find hri_preferences_study)/launch/launch_arm.launch">
-    </include>
-    <!-- <include file="$(find hri_preferences_study)/launch/launch_robot.launch">
+
+    <group if="$(eval controller == 'web')">
+        <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch">
+        </include>
+    </group>
+
+    <!-- <include file="$(find hri_preferences_study)/launch/launch_arm.launch">
     </include> -->
+    <include file="$(find hri_preferences_study)/launch/launch_robot.launch">
+    </include>
 
     <node pkg="hri_preferences_study" name="study_gui" type="study_gui.py" output="screen"></node>
 
