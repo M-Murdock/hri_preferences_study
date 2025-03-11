@@ -18,7 +18,8 @@ from arm_trajectory import Trajectory
 import kinova_msgs.srv
 import time
 
-# 
+arm = None
+
 class ConditionConfigFrame(tkinter.Frame):
     def __init__(self, parent, _):
         super().__init__(parent)
@@ -55,16 +56,42 @@ class SetGoalFrame(tkinter.Frame):
     def set_state(self, state):
         self._entry.value = state
 
+class SetController(tkinter.Frame):
+    def __init__(self, parent, _):
+        super().__init__(parent)
+
+        OPTIONS = ["web", "xbox"]
+        self._entry = tkinter.StringVar(self)
+        self._entry.set(OPTIONS[0]) # default value
+
+        controller_menu = tkinter.OptionMenu(self, self._entry, *OPTIONS)
+        controller_menu.pack()
+
+    def get_config(self):
+        return {"Controller_Name": self._entry.get()}
+    def set_state(self, state):
+        self._entry.value = state
+
+
+
 # override the study runner to record arm trajectories
 class HRIStudyRunner(study_runner.StudyRunner):
     def __init__(self, root, trial_runner):
         path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/study_config.yaml")
         study_runner.StudyRunner.__init__(self, root, trial_runner, initial_config_file=path)
         self.save_config_button.destroy()
-        self.reverse_button = tkinter.Button(self.start_frame,
-                                           text="Reverse Trajectory",
-                                           command=self._reverse_button_callback)
-        self.reverse_button.grid(row=1, column=1, columnspan=2, sticky="EW")
+
+        self.open_gripper = tkinter.Button(self.start_frame,
+                                           text="Open Gripper",
+                                           command=self.gripper_open_button_callback)
+        self.open_gripper.grid(row=0, column=1, columnspan=1, sticky="EW")
+
+
+        self.close_gripper = tkinter.Button(self.start_frame,
+                                           text="Close Gripper",
+                                           command=self.gripper_close_button_callback)
+        self.close_gripper.grid(row=1, column=1, columnspan=1, sticky="EW")
+
 
         self.start_pos_button = tkinter.Button(self.start_frame,
                                            text="Go To Start Position",
@@ -84,6 +111,7 @@ class HRIStudyRunner(study_runner.StudyRunner):
         self.user_id = 0
 
 
+
     def _home_button_callback(self):
         rospy.wait_for_service("/j2s7s300_driver/in/home_arm")
         home_arm = rospy.ServiceProxy("/j2s7s300_driver/in/home_arm", kinova_msgs.srv.HomeArm)
@@ -96,7 +124,6 @@ class HRIStudyRunner(study_runner.StudyRunner):
 
     def _start_pos_button_callback(self):
         self.autonomous = autonomous.Autonomous([3.1573585672430626, 1.669121033188949, 2.927425233467256, 1.3752290895157453, 4.042685725275227, 4.556754378912677, 7.900009047094323], file=False)
-        self.autonomous.open_gripper()
         self.autonomous.move()
 
     def _cancel_button_callback(self):
@@ -116,14 +143,13 @@ class HRIStudyRunner(study_runner.StudyRunner):
         self.trajectory_recorder.record()
         study_runner.StudyRunner._start_button_callback(self)
 
-    def _reverse_button_callback(self):
-        try:
-            # move back to home position by executing reverse trajectory
-            print("reversing...")
-            self.trajectory_recorder.execute_reverse_trajectory()
-        except:
-            pass
+    def gripper_open_button_callback(self):
+        global arm
+        arm.open_gripper()
 
+    def gripper_close_button_callback(self):
+        global arm
+        arm.close_gripper()
 
 class SetUserID(LoggingFrame):
     def __init__(self, parent, initial_config={}):
@@ -177,21 +203,21 @@ async def run_autonomy_level(config, status_cb):
 
 
     with RunLogging(config):
+        global arm 
+
         if config["Condition"] == "Autonomous":
             autonomous_controller = autonomous.Autonomous(config["Goal_Name"])
-            autonomous_controller.close_gripper()
+            arm = autonomous_controller
             time.sleep(2)
             autonomous_controller.move()
-            autonomous_controller.open_gripper()
         if config["Condition"] == "Shared":
-            shared_controller = shared_control.Shared_Control()
-            shared_controller.close_gripper()
+            shared_controller = shared_control.Shared_Control(config["Controller_Name"])
+            arm = shared_controller
             shared_controller.run_shared_control()
             time.sleep(2)
-            shared_controller.open_gripper()
         if config["Condition"] == "Teleop":
-            direct_controller = direct_control.Direct_Control()
-            direct_controller.close_gripper()
+            direct_controller = direct_control.Direct_Control(config["Controller_Name"])
+            arm = direct_controller
             direct_controller.allow_gripper_control = True
         rospy.spin()
 
@@ -203,7 +229,7 @@ def main():
     rospy.init_node("gui", anonymous=True)
     root = tkinter.Tk()
     root.geometry("400x400+700+300")
-    root.protocol("WM_DELETE_WINDOW", disable_event)
+    # root.protocol("WM_DELETE_WINDOW", disable_event)
 
     runner = HRIStudyRunner(root, run_autonomy_level)
     logging_frame = runner.add_config_frame(SetUserID, "Logging")
@@ -213,6 +239,8 @@ def main():
     runner.add_config_frame(ConditionConfigFrame, "Condition")
 
     runner.add_config_frame(SetGoalFrame, "Goal")
+
+    runner.add_config_frame(SetController, "Controller")
     
 
     # set the user id (equivalent to the one created by StudyRunner)

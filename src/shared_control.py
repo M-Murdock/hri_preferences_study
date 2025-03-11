@@ -23,7 +23,9 @@ import armpy.gripper
 
 
 class Shared_Control:
-    def __init__(self):
+    def __init__(self, controller):
+        self.CONTROLLER = controller
+
         self.arm = armpy.gen2_teleop.Gen2Teleop(ns="/j2s7s300_driver")
         self.gripper = armpy.gripper.Gripper()
 
@@ -48,8 +50,6 @@ class Shared_Control:
                 self.goals_xyz.append((self.output.get(goal).get('position')['x'], self.output.get(goal).get('position')['y'], self.output.get(goal).get('position')['z']))
 
         # get the controller mapping
-        self.CONTROLLER = "web"
-
         if self.CONTROLLER == "web":
             path = "/home/mavis/catkin_ws/src/robot_web_interface_controller/config/WebXYZMode.yaml"
         else:
@@ -82,14 +82,14 @@ class Shared_Control:
         return actions
 
     def callback(self, data):
-        if self.CONTROLLER == "web":
-            if data.buttons[0] == 1: 
-                self.arm.stop()
-                self.open_gripper() 
-        else: 
-            if data.buttons[4] == 1 and data.buttons[5] == 1: 
-                self.arm.stop()
-                self.open_gripper() 
+        # if self.CONTROLLER == "web":
+        #     if data.buttons[0] == 1: 
+        #         # self.arm.stop()
+        #         self.open_gripper() 
+        # else: 
+        #     if data.buttons[4] == 1 and data.buttons[5] == 1: 
+        #         # self.arm.stop()
+        #         self.open_gripper() 
         self.direct_cmd = self.mode.process_input(data).twist
 
     def run_shared_control(self):

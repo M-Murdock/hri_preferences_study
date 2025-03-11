@@ -15,8 +15,8 @@ import armpy.gripper
 
 
 class Direct_Control:
-    def __init__(self):
-        self.CONTROLLER = "web"
+    def __init__(self, controller):
+        self.CONTROLLER = controller
 
         if self.CONTROLLER == "web":
             path = "/home/mavis/catkin_ws/src/robot_web_interface_controller/config/WebXYZMode.yaml"
@@ -45,14 +45,14 @@ class Direct_Control:
         print("received joy message")
         print(data.axes)
  
-        if self.CONTROLLER == "web":
-            if data.buttons[0] == 1: 
-                self.arm.stop()
-                self.open_gripper() 
-        else: 
-            if data.buttons[4] == 1 and data.buttons[5] == 1: 
-                self.arm.stop()
-                self.open_gripper() 
+        # if self.CONTROLLER == "web":
+        #     if data.buttons[0] == 1: 
+                # self.arm.stop()
+                # self.open_gripper() 
+        # else: 
+        #     if data.buttons[4] == 1 and data.buttons[5] == 1: 
+                # self.arm.stop()
+                # self.open_gripper() 
 
 
         command = self.mode.process_input(data).twist
@@ -79,3 +79,6 @@ class Direct_Control:
 
     def close_gripper(self):
         self.gripper.close()
+
+    def stop_arm(self):
+        self.arm.stop()
