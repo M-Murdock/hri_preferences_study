@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
 <launch>
+    <!-- <arg name="controller" default="web"/> -->
+
     
     <!-- Start up the robot -->
     <include file="$(find poli2_launch)/launch/machine1.launch">
@@ -7,9 +9,6 @@
         <arg name="robot_name" value="beep"/>
         <arg name="start_rviz" value="true"/>
     </include>
-
-    <!-- Collect Data -->
-    <node pkg="joy" name="joy_node" type="joy_node" />
 
  
     <node
