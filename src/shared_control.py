@@ -54,8 +54,7 @@ class Shared_Control:
             path = "/home/mavis/catkin_ws/src/robot_web_interface_controller/config/WebXYZMode.yaml"
         else:
             path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/XYZMode.yaml")
-        # path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/XYZMode.yaml")
-        # path = "/home/mavis/catkin_ws/src/hri_preferences_study/src/web_interface/WebXYZMode.yaml"
+     
         with open(path, 'r') as f:
             self.cfg = yaml.safe_load(f)
 
@@ -82,10 +81,14 @@ class Shared_Control:
         return actions
 
     def callback(self, data):
-        # if self.CONTROLLER == "web":
-        #     if data.buttons[0] == 1: 
-        #         # self.arm.stop()
-        #         self.open_gripper() 
+        if self.CONTROLLER == "web":
+            if data.buttons[0] == 1: 
+                self.arm.stop()
+                self.open_gripper() 
+            elif data.buttons[1] == 1: 
+                self.arm.stop()
+                self.close_gripper()
+        
         # else: 
         #     if data.buttons[4] == 1 and data.buttons[5] == 1: 
         #         # self.arm.stop()
