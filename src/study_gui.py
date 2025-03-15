@@ -207,16 +207,19 @@ async def run_autonomy_level(config, status_cb):
 
         if config["Condition"] == "Autonomous":
             autonomous_controller = autonomous.Autonomous(config["Goal_Name"])
+            autonomous_controller.close_gripper()
             arm = autonomous_controller
             time.sleep(2)
             autonomous_controller.move()
         if config["Condition"] == "Shared":
             shared_controller = shared_control.Shared_Control(config["Controller_Name"])
+            shared_controller.close_gripper()
             arm = shared_controller
             shared_controller.run_shared_control()
             time.sleep(2)
         if config["Condition"] == "Teleop":
             direct_controller = direct_control.Direct_Control(config["Controller_Name"])
+            direct_controller.close_gripper()
             arm = direct_controller
             direct_controller.allow_gripper_control = True
         rospy.spin()
