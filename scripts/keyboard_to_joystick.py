@@ -43,19 +43,28 @@ class KeyState:
         with self._lock:
             return copy.deepcopy(self._state)
 
-KEYS_UP = { Key.up, KeyCode.from_char('w') }
-KEYS_DOWN = { Key.down, KeyCode.from_char('s') }
+KEYS_FORWARD = { Key.up, KeyCode.from_char('w') }
+KEYS_BACK = { Key.down, KeyCode.from_char('s') }
 KEYS_LEFT = { Key.left, KeyCode.from_char('a') }
 KEYS_RIGHT = { Key.right, KeyCode.from_char('d') }
-KEYS_BUTTON = { Key.space }
 
-KEYS_USED = KEYS_UP | KEYS_DOWN | KEYS_LEFT | KEYS_RIGHT | KEYS_BUTTON
+KEYS_UP = { Key.space }
+KEYS_DOWN = { Key.shift }
+# KEYS_OPEN = { KeyCode.from_char('o') }
+# KEYS_CLOSE = { KeyCode.from_char('c') }
+
+# KEYS_BUTTON = { Key.space }
+KEYS_BUTTON = { KeyCode.from_char('o'), KeyCode.from_char('c') }
+
+KEYS_USED = KEYS_UP | KEYS_DOWN | KEYS_FORWARD | KEYS_BACK | KEYS_LEFT | KEYS_RIGHT | KEYS_BUTTON
 def get_message_from_key_state(state):
     x_axis = any(state[k] for k in KEYS_RIGHT) - any(state[k] for k in KEYS_LEFT)
-    y_axis = any(state[k] for k in KEYS_UP) - any(state[k] for k in KEYS_DOWN)
+    y_axis = any(state[k] for k in KEYS_FORWARD) - any(state[k] for k in KEYS_BACK)
+    z_axis = any(state[k] for k in KEYS_UP) - any(state[k] for k in KEYS_DOWN)
+    # button = any(state[k] for k in KEYS_BUTTON)
     button = any(state[k] for k in KEYS_BUTTON)
     return Joy(
-        axes = [x_axis, -y_axis, 0.],
+        axes = [x_axis, -y_axis, z_axis],
         buttons = [button]
     )
 
