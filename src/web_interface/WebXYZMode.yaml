@@ -10,4 +10,4 @@ axes:
   scale: 1.0
 buttons:
 - output: OPEN_GRIPPER
-- output: ''
+- output: OPEN_GRIPPER
