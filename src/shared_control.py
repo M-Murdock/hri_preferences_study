@@ -52,7 +52,10 @@ class Shared_Control:
         # get the controller mapping
         if self.CONTROLLER == "web":
             path = "/home/mavis/catkin_ws/src/robot_web_interface_controller/config/WebXYZMode.yaml"
-        else:
+        elif self.CONTROLLER == "keyboard":
+            print("keyboard")
+            path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/keyboard.yaml")
+        elif self.CONTROLLER == "xbox":
             path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/XYZMode.yaml")
      
         with open(path, 'r') as f:
@@ -87,12 +90,19 @@ class Shared_Control:
                 self.open_gripper() 
             elif data.buttons[1] == 1: 
                 self.arm.stop()
-                self.close_gripper()
+                self.close_gripper() 
+        elif self.CONTROLLER == "keyboard": #close=-1 open=1
+            if data.buttons[0] == 1: 
+                self.arm.stop()
+                self.open_gripper() 
+            elif data.buttons[0] == -1: 
+                self.arm.stop()
+                self.close_gripper() 
+        elif self.CONTROLLER == "xbox": 
+            if data.buttons[4] == 1 and data.buttons[5] == 1: 
+                self.arm.stop()
+                self.open_gripper() 
         
-        # else: 
-        #     if data.buttons[4] == 1 and data.buttons[5] == 1: 
-        #         # self.arm.stop()
-        #         self.open_gripper() 
         self.direct_cmd = self.mode.process_input(data).twist
 
     def run_shared_control(self):
