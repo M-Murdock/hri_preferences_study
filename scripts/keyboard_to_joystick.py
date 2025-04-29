@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+# TODO: Add a button that lets you adjust the step size
 import copy
 from pynput.keyboard import Key, KeyCode, Listener
 import rospy
@@ -16,32 +17,32 @@ class KeyState:
     def reset(self):
         with self._lock:
             if self._key_filt is None:
-                self._state = {}
+                self._state = dict()
             else:
-                self._state = { k: False for k in self._key_filt }
+                self._state = { k: [False, False] for k in self._key_filt }
 
     def on_pressed(self, key):
         if self._key_filt is None or key in self._key_filt:
             with self._lock:
-                self._state[key] = True
+                self._state[key] = [True, True]
     
     def on_released(self, key):
-        if self._key_filt is None:
+        if self._key_filt is None or key in self._key_filt:
             with self._lock:
-                if key in self._state:
-                    del(self._state[key])
+                if key in self._state and self._state[key][0]:
+                    self._state[key][0] = False
                 else:
                     print('warning: released key {} but not marked as pressed'.format(key))
-        elif key in self._key_filt:
-            with self._lock:
-                if not self._state[key]:
-                    print('warning: released key {} but not marked as pressed'.format(key))
-                else:
-                    self._state[key] = False
 
-    def get_data(self):
+    def get_data(self, unlatch=True):
+        data = dict()
         with self._lock:
-            return copy.deepcopy(self._state)
+            for k in self._state.keys():
+                data[k] = self._state[k][1]
+                if unlatch:
+                    self._state[k][1] = self._state[k][0]
+            return data
+
 
 KEYS_FORWARD = { KeyCode.from_char('w') }
 KEYS_BACK = { KeyCode.from_char('s') }
@@ -65,7 +66,7 @@ def get_message_from_key_state(state):
     return Joy(
         axes = [-x_axis, -y_axis, z_axis],
         buttons = [gripper]
-    )
+    ), 10
 
 def main():
     rospy.init_node('keyboard_to_joystick', anonymous=True)
@@ -78,12 +79,20 @@ def main():
 
     pub = rospy.Publisher('joy', Joy, queue_size=1)
     
+    hold = 0
     def publish_msg(_):
-        pub.publish(get_message_from_key_state(key_state.get_data()))
+        nonlocal hold
+        if hold > 0:
+            hold -= 1
+        else:
+            msg, hold = get_message_from_key_state(key_state.get_data())
+        # pub.publish(get_message_from_key_state(key_state.get_data()))
+            pub.publish(msg)
+        # rospy.sleep(1)
 
         # print("key pressed!")
 
-    pub_rate = rospy.get_param('pub_rate', 100.)
+    pub_rate = rospy.get_param('pub_rate', 20.)
    
     timer = rospy.Timer(rospy.Duration(1./pub_rate), publish_msg)
 
