@@ -16,9 +16,8 @@ import armpy.gripper
 
 class Direct_Control:
     def __init__(self, controller):
-        print("\n\nDIRECT CONTROL\n\n")
-        # self.CONTROLLER = controller
-        self.CONTROLLER = "keyboard"
+
+        self.CONTROLLER = controller
 
         if self.CONTROLLER == "web":
             path = "/home/mavis/catkin_ws/src/robot_web_interface_controller/config/WebXYZMode.yaml"
