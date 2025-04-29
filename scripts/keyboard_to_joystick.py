@@ -4,9 +4,6 @@ import copy
 from pynput.keyboard import Key, KeyCode, Listener
 import rospy
 import threading
-import time
-import teleop_lib
-from teleop_lib.gui.teleop_config_frame import TeleopConfigFrame, get_teleop_info
 from sensor_msgs.msg import Joy
 import yaml
 
