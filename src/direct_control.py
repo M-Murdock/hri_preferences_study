@@ -16,11 +16,16 @@ import armpy.gripper
 
 class Direct_Control:
     def __init__(self, controller):
-        self.CONTROLLER = controller
+        print("\n\nDIRECT CONTROL\n\n")
+        # self.CONTROLLER = controller
+        self.CONTROLLER = "keyboard"
 
         if self.CONTROLLER == "web":
             path = "/home/mavis/catkin_ws/src/robot_web_interface_controller/config/WebXYZMode.yaml"
-        else:
+        elif self.CONTROLLER == "keyboard":
+            print("keyboard")
+            path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/keyboard.yaml")
+        elif self.CONTROLLER == "xbox":
             path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/XYZMode.yaml")
         
         with open(path, 'r') as file:
@@ -29,21 +34,27 @@ class Direct_Control:
         self.cmd = None
 
         self.gripper = armpy.gripper.Gripper()
-
+        
         self.mode = teleop_lib.input_profile.build_profile(self.cfg)
-        rospy.Subscriber("/joy", Joy, self.callback)
-        rospy.Subscriber("/j2s7s300_driver/out/tool_pose", PoseStamped, self.check_pose)
+        # rospy.Subscriber("/joy", Joy, self.callback)
+        # rospy.Subscriber("/j2s7s300_driver/out/tool_pose", PoseStamped, self.check_pose)
 
         self.pose = PoseStamped()
+        
         self.arm = armpy.gen2_teleop.Gen2Teleop(ns="/j2s7s300_driver")
 
     def check_pose(self, data):
         self.pose = data 
 
+    def start(self):
+        self.joy_subscriber = rospy.Subscriber("/joy", Joy, self.callback)
+        self.pose_subscriber =rospy.Subscriber("/j2s7s300_driver/out/tool_pose", PoseStamped, self.check_pose)
+
     def callback(self, data):
         print("received joy message")
         print(data.axes)
- 
+        print(data)
+
         if self.CONTROLLER == "web":
             if data.buttons[0] == 1: 
                 self.arm.stop()
@@ -51,10 +62,17 @@ class Direct_Control:
             elif data.buttons[1] == 1: 
                 self.arm.stop()
                 self.close_gripper() 
-        # else: 
-        #     if data.buttons[4] == 1 and data.buttons[5] == 1: 
-                # self.arm.stop()
-                # self.open_gripper() 
+        elif self.CONTROLLER == "keyboard": #close=-1 open=1
+            if data.buttons[0] == 1: 
+                self.arm.stop()
+                self.open_gripper() 
+            elif data.buttons[0] == -1: 
+                self.arm.stop()
+                self.close_gripper() 
+        elif self.CONTROLLER == "xbox": 
+            if data.buttons[4] == 1 and data.buttons[5] == 1: 
+                self.arm.stop()
+                self.open_gripper() 
 
 
         command = self.mode.process_input(data).twist
@@ -72,6 +90,7 @@ class Direct_Control:
         if self.pose.pose.position.z < 0.03:
             if command.linear.z < 0:
                 new_cmd.linear.z = 0
+
 
         self.arm.set_velocity(new_cmd)
 

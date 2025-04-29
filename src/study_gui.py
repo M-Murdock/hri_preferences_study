@@ -60,7 +60,7 @@ class SetController(tkinter.Frame):
     def __init__(self, parent, _):
         super().__init__(parent)
 
-        OPTIONS = ["web", "xbox"]
+        OPTIONS = ["web", "xbox", "keyboard"]
         self._entry = tkinter.StringVar(self)
         self._entry.set(OPTIONS[0]) # default value
 
@@ -203,7 +203,7 @@ async def run_autonomy_level(config, status_cb):
 
 
     with RunLogging(config):
-        global arm 
+        # global arm 
 
         if config["Condition"] == "Autonomous":
             autonomous_controller = autonomous.Autonomous(config["Goal_Name"])
@@ -218,9 +218,12 @@ async def run_autonomy_level(config, status_cb):
             shared_controller.run_shared_control()
             time.sleep(2)
         if config["Condition"] == "Teleop":
+            rospy.loginfo("Creating Direct Controller")
             direct_controller = direct_control.Direct_Control(config["Controller_Name"])
+            direct_controller.start()
+            rospy.loginfo("Successfully Created Direct controller")
             direct_controller.close_gripper()
-            arm = direct_controller
+            # arm = direct_controller
             direct_controller.allow_gripper_control = True
         rospy.spin()
 

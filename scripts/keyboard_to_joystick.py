@@ -4,8 +4,11 @@ import copy
 from pynput.keyboard import Key, KeyCode, Listener
 import rospy
 import threading
-
+import time
+import teleop_lib
+from teleop_lib.gui.teleop_config_frame import TeleopConfigFrame, get_teleop_info
 from sensor_msgs.msg import Joy
+import yaml
 
 class KeyState:
     def __init__(self, key_filt=None):
@@ -43,29 +46,28 @@ class KeyState:
         with self._lock:
             return copy.deepcopy(self._state)
 
-KEYS_FORWARD = { Key.up, KeyCode.from_char('w') }
-KEYS_BACK = { Key.down, KeyCode.from_char('s') }
-KEYS_LEFT = { Key.left, KeyCode.from_char('a') }
-KEYS_RIGHT = { Key.right, KeyCode.from_char('d') }
+KEYS_FORWARD = { KeyCode.from_char('w') }
+KEYS_BACK = { KeyCode.from_char('s') }
+KEYS_LEFT = { KeyCode.from_char('a') }
+KEYS_RIGHT = { KeyCode.from_char('d') }
 
-KEYS_UP = { Key.space }
-KEYS_DOWN = { Key.shift }
-# KEYS_OPEN = { KeyCode.from_char('o') }
-# KEYS_CLOSE = { KeyCode.from_char('c') }
+KEYS_UP = { Key.space}
+KEYS_DOWN = { Key.shift}
+   
+KEYS_OPEN = { KeyCode.from_char('o') }
+KEYS_CLOSE = { KeyCode.from_char('c') }
 
-# KEYS_BUTTON = { Key.space }
-KEYS_BUTTON = { KeyCode.from_char('o'), KeyCode.from_char('c') }
-
-KEYS_USED = KEYS_UP | KEYS_DOWN | KEYS_FORWARD | KEYS_BACK | KEYS_LEFT | KEYS_RIGHT | KEYS_BUTTON
+KEYS_USED = KEYS_UP | KEYS_DOWN | KEYS_FORWARD | KEYS_BACK | KEYS_LEFT | KEYS_RIGHT | KEYS_OPEN | KEYS_CLOSE
 def get_message_from_key_state(state):
     x_axis = any(state[k] for k in KEYS_RIGHT) - any(state[k] for k in KEYS_LEFT)
     y_axis = any(state[k] for k in KEYS_FORWARD) - any(state[k] for k in KEYS_BACK)
     z_axis = any(state[k] for k in KEYS_UP) - any(state[k] for k in KEYS_DOWN)
-    # button = any(state[k] for k in KEYS_BUTTON)
-    button = any(state[k] for k in KEYS_BUTTON)
+    
+    gripper = any(state[k] for k in KEYS_OPEN) - any(state[k] for k in KEYS_CLOSE)
+
     return Joy(
-        axes = [x_axis, -y_axis, z_axis],
-        buttons = [button]
+        axes = [-x_axis, -y_axis, z_axis],
+        buttons = [gripper]
     )
 
 def main():
@@ -82,7 +84,10 @@ def main():
     def publish_msg(_):
         pub.publish(get_message_from_key_state(key_state.get_data()))
 
+        # print("key pressed!")
+
     pub_rate = rospy.get_param('pub_rate', 100.)
+   
     timer = rospy.Timer(rospy.Duration(1./pub_rate), publish_msg)
 
     print('Ready')
