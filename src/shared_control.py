@@ -26,7 +26,7 @@ class Shared_Control:
     def __init__(self, controller):
         self.CONTROLLER = controller
 
-        self.arm = armpy.gen2_teleop.Gen2Teleop(ns="/j2s7s300_driver")
+        self.arm = armpy.gen2_teleop.Gen2Teleop(ns="/j2s7s300_driver", home_arm=False)
         self.gripper = armpy.gripper.Gripper()
 
         moveit_commander.roscpp_initialize(sys.argv)
@@ -173,7 +173,7 @@ class Shared_Control:
                 # Merge the two actions
                 #-------------
                 # If arm is about to reach the shelves, then ignore the shared auton algorithm
-                if position.pose.position.y < -0.45:
+                if position.pose.position.y < -0.4:#-0.45:
                     merged_action = u_h
                 #-------------
                 else: 
