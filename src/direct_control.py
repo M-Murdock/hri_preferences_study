@@ -40,7 +40,7 @@ class Direct_Control:
 
         self.pose = PoseStamped()
         
-        self.arm = armpy.gen2_teleop.Gen2Teleop(ns="/j2s7s300_driver")
+        self.arm = armpy.gen2_teleop.Gen2Teleop(ns="/j2s7s300_driver", home_arm=False)
 
     def check_pose(self, data):
         self.pose = data 
