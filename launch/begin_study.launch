@@ -1,13 +1,5 @@
 <?xml version="1.0"?>
 <launch>
-    <arg name="controller" default="web"/>
-
-
-    <group if="$(eval controller == 'xbox')">
-        <!-- Collect Data -->
-        <node pkg="joy" name="joy_node" type="joy_node" />
-    </group>
-
 
     <!-- <include file="$(find hri_preferences_study)/launch/launch_arm.launch">
     </include> -->
