@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Helper functions for MoveIt planning scene interface - add and remove
 collision objects. Adapted from code by Andrew Sharp

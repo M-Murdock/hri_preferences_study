@@ -68,7 +68,7 @@ def get_message_from_key_state(state):
         buttons = [gripper]
     ), 10
 
-def main():
+def start():
     rospy.init_node('keyboard_to_joystick', anonymous=True)
 
     key_state = KeyState(KEYS_USED)
@@ -104,6 +104,6 @@ def main():
     listener.join()
 
 if __name__ == "__main__":
-    main()
+    start()
 
 
