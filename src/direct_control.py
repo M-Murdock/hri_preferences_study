@@ -12,8 +12,9 @@ import teleop_lib.input_profile
 from sensor_msgs.msg import Joy
 import os
 import armpy.gripper
-
-
+from start_joy_node import JoyNodeLauncher
+                                  
+                           
 class Direct_Control:
     def __init__(self, controller):
 
@@ -25,6 +26,8 @@ class Direct_Control:
             print("keyboard")
             path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/keyboard.yaml")
         elif self.CONTROLLER == "xbox":
+            launcher = JoyNodeLauncher()
+            launcher.start_joy_node()
             path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../config/XYZMode.yaml")
         
         with open(path, 'r') as file:
@@ -90,7 +93,8 @@ class Direct_Control:
             if command.linear.z < 0:
                 new_cmd.linear.z = 0
 
-
+        print("setting velocity: ")
+        print(new_cmd)
         self.arm.set_velocity(new_cmd)
 
 # stop arm right after opening gripper
