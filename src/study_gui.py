@@ -60,7 +60,7 @@ class SetController(tkinter.Frame):
     def __init__(self, parent, _):
         super().__init__(parent)
 
-        OPTIONS = ["web", "xbox", "keyboard"]
+        OPTIONS = ["keyboard", "web", "xbox"]
         self._entry = tkinter.StringVar(self)
         self._entry.set(OPTIONS[0]) # default value
 
@@ -209,8 +209,10 @@ async def run_autonomy_level(config, status_cb):
             autonomous_controller = autonomous.Autonomous(config["Goal_Name"])
             autonomous_controller.close_gripper()
             arm = autonomous_controller
+            # autonomous_controller.open_gripper()
             time.sleep(2)
             autonomous_controller.move()
+            autonomous_controller.open_gripper()
         if config["Condition"] == "Shared":
             shared_controller = shared_control.Shared_Control(config["Controller_Name"])
             shared_controller.close_gripper()
